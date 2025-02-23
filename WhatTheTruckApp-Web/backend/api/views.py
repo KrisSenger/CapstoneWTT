@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
@@ -8,12 +9,14 @@ from .serializers import *
 
 # User Views
 @api_view(['GET'])
-def getData(request):
+@permission_classes([AllowAny])
+def getUserData(request):
     users = WTT_User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def getUser(request, pk):
     try:
         user = WTT_User.objects.get(id=pk)
@@ -60,7 +63,7 @@ def deleteUser(request, pk):
 
 # Truck Views
 @api_view(['GET'])
-def getData(request):
+def getTruckData(request):
     truck = WTT_Truck.objects.all()
     serializer = TruckSerializer(truck, many=True)
     return Response(serializer.data)
@@ -112,7 +115,7 @@ def deleteTruck(request, pk):
 
 # Trailer Views
 @api_view(['GET'])
-def getData(request):
+def getTrailerData(request):
     trailers = WTT_Trailer.objects.all()
     serializer = TrailerSerializer(trailers, many=True)
     return Response(serializer.data)
@@ -164,7 +167,8 @@ def deleteTrailer(request, pk):
 
 # Log Views
 @api_view(['GET'])
-def getData(request):
+@permission_classes([AllowAny])
+def getLogData(request):
     logs = WTT_Log.objects.all()
     serializer = LogSerializer(logs, many=True)
     return Response(serializer.data)
@@ -216,7 +220,7 @@ def deleteLog(request, pk):
 
 # Log Inspect Items Views
 @api_view(['GET'])
-def getData(request):
+def getItemData(request):
     items = WTT_Log_Inspect_Items.objects.all()
     serializer = LogInspectItemsSerializer(items, many=True)
     return Response(serializer.data)
