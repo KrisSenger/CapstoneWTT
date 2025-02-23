@@ -12,7 +12,7 @@ class WTT_User(models.Model):
     address = models.CharField(max_length=50)
     driver_license = models.CharField(max_length=10)
 
-class WTT_Truck(models.model):
+class WTT_Truck(models.Model):
     truckID = models.AutoField(primary_key=True)
     make_model = models.CharField(max_length=30)
     license_plate = models.CharField(max_length=8)
@@ -27,7 +27,7 @@ class WTT_Trailer(models.Model):
     carrier = models.CharField(max_length=30)
     jurisdiction = models.CharField(max_length=25)
 
-class WTT_Log(models.model):
+class WTT_Log(models.Model):
     logID = models.IntegerField()
     userID = models.IntegerField()
     truckID = models.IntegerField()
@@ -49,5 +49,5 @@ class WTT_Log_Inspect_Items(models.Model):
     item_name = models.CharField(max_length=100)
  
 class WTT_Log_Inspect_Det(models.Model):
-    logID = models.IntegerField(primary_key=True, foreign_key=True)
-    itemID = models.IntegerField(foreign_key=True, primary_key=True)
+    logID = models.ForeignKey('WTT_Log', on_delete=models.CASCADE,primary_key=True)
+    itemID = models.ForeignKey('WTT_Log_Inspect_Items', on_delete=models.CASCADE)
