@@ -100,7 +100,7 @@ def updateTruck(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-def deleteUser(request, pk):
+def deleteTruck(request, pk):
     try:
         truck = WTT_Truck.objects.get(id=pk)
     except ObjectDoesNotExist:

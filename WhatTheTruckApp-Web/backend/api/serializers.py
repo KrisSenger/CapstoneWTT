@@ -6,6 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = WTT_User
         fields = '__all__'
         extra_kwargs = {"password": {"write_only": True, "required": True}}
+        
 
 class TruckSerializer(serializers.ModelSerializer):
     class Meta:
