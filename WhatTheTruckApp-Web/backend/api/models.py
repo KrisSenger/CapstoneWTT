@@ -23,7 +23,6 @@ class WTT_User(AbstractBaseUser, PermissionsMixin):
     
     id = models.AutoField(primary_key=True)
     employeeID = models.CharField(max_length=100)
-    status = models.CharField(max_length=1)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     email = models.EmailField(max_length=100, unique=True)
