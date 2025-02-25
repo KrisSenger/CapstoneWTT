@@ -101,7 +101,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'PASSWORD': 'Hamburger!247',
         'NAME': 'wttdb',
         'PORT': '5432',
         'HOST': 'localhost',
