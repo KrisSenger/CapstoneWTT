@@ -19,7 +19,7 @@ function Login({ route }) {
         setError(null);
 
         try {
-            const res = await api.post(`/api/${route}/`, {
+            const res = await api.post(`/api/token/`, {
                 username: userName,
                 password: password,
             });
@@ -87,7 +87,7 @@ function Login({ route }) {
                         />
                     </div>
 
-                
+
                     <div className="mb-6 relative">
                         <label
                             className="block text-gray-700 font-medium mb-2"
@@ -99,13 +99,13 @@ function Login({ route }) {
                             <input
                                 id="password"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10" // Add padding-right for button
-                                type={showPassword ? "text" : "password"} 
+                                type={showPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                         
+
                             <button
                                 type="button"
                                 className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
