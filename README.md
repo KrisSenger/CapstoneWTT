@@ -13,9 +13,6 @@ sqlparse
 psycopg2-binary
 python-dotenv</li>
 <li>Then create a .env file with your database url</li>
-<li>To run the database install PostgresSQL</li>
-<li>Add postgres to system path variable</li>
-<li>Then create database by running <b>psql -U postgres</b> in commandline then create the database with <b>CREATE DATABASE wttdb;</b></li>
 <li>Then create a virtual environment with <b>python -m venv env</b></li>
 <li>Activate virtual environment script with <b>./env/Scripts/Activate.ps1</b></li>
 <li>Next run <b>pip install -r requirements.txt</b></li>
