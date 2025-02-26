@@ -2,16 +2,16 @@
 <ol>
 <li>Backend setup instructions for WTT-Web:</li>
 <li>In root directory create a requirements.txt file with:</li>
-<li>asgiref</li>
-<li>Django</li>
-<li>django-cors-headers</li>
-<li>djangorestframework</li>
-<li>djangorestframework-simplejwt</li>
-<li>PyJWT</li>
-<li>pytz</li>
-<li>sqlparse</li>
-<li>psycopg2-binary</li>
-<li>python-dotenv</li>
+<li>asgiref
+Django
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+PyJWT
+pytz
+sqlparse
+psycopg2-binary
+python-dotenv</li>
 <li>Then create a .env file with your database url</li>
 <li>To run the database install PostgresSQL</li>
 <li>Add postgres to system path variable</li>
