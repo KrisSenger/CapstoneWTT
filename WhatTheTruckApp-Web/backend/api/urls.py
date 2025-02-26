@@ -6,6 +6,7 @@ urlpatterns = [
 
     # User URLs
     path('user/data/', getUserData, name='get_user_data'),
+    path('user/data/me/', getCurUserData, name='get_cur_user_data'),
     path('user/<int:pk>/', getUser, name='get_user'),
     path('user/add/', addUser, name='add_user'),
     path('user/update/<int:pk>/', updateUser, name='update_user'),
