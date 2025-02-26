@@ -14,6 +14,8 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+from urllib.parse import urlparse
+import dj_database_url
 
 load_dotenv()
 
@@ -60,7 +62,7 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
-AUTH_USER_MODEL = "api.WTT_User"
+AUTH_USER_MODEL = "api.wtt_user"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,15 +99,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# Replace the DATABASES section of your settings.py with this
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
+
+# Get the raw database URL and remove surrounding quotes if present
+db_url = os.getenv("DATABASE_URL", "").strip("'\"")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'USER': 'postgres',
-        'PASSWORD': 'Hamburger!247',
-        'NAME': 'wttdb',
-        'PORT': '5432',
-        'HOST': 'localhost',
-    }
+    'default': dj_database_url.config(
+        default=db_url, 
+        conn_max_age=600, 
+        ssl_require=True
+    )
 }
 
 

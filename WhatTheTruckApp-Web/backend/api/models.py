@@ -46,7 +46,7 @@ class WTT_User(AbstractBaseUser, PermissionsMixin):
 
 class WTT_Truck(models.Model):
     truckID = models.AutoField(primary_key=True)
-    make_model = models.CharField(max_length=30)
+    make_model = models.CharField(max_length=60)
     license_plate = models.CharField(max_length=8)
     odometer = models.IntegerField()
     carrier = models.CharField(max_length=30)
@@ -57,7 +57,7 @@ class WTT_Truck(models.Model):
 
 class WTT_Trailer(models.Model):
     trailerID = models.AutoField(primary_key=True)
-    make_model = models.CharField(max_length=30)
+    make_model = models.CharField(max_length=60)
     license_plate = models.CharField(max_length=8)
     carrier = models.CharField(max_length=30)
     jurisdiction = models.CharField(max_length=25)
@@ -66,10 +66,10 @@ class WTT_Trailer(models.Model):
         db_table = 'WTT_Trailer'
 
 class WTT_Log(models.Model):
-    logID = models.IntegerField()
+    logID = models.IntegerField(primary_key=True)
     userID = models.IntegerField()
     truckID = models.IntegerField()
-    trailerID = models.IntegerField()
+    trailerID = models.IntegerField(null=True)
     trip = models.IntegerField()
     location = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
@@ -85,6 +85,7 @@ class WTT_Log(models.Model):
     class Meta:
         db_table = 'WTT_Log'
 
+
 class WTT_Log_Inspect_Items(models.Model):
     itemID = models.AutoField(primary_key=True)
     item_name = models.CharField(max_length=100)
@@ -93,8 +94,8 @@ class WTT_Log_Inspect_Items(models.Model):
         db_table = 'WTT_Log_Inspect_Items'
 
 class WTT_Log_Inspect_Det(models.Model):
-    logID = models.ForeignKey('WTT_Log', on_delete=models.CASCADE,primary_key=True)
-    itemID = models.ForeignKey('WTT_Log_Inspect_Items', on_delete=models.CASCADE)
+    logID = models.ForeignKey('WTT_Log', on_delete=models.CASCADE, primary_key=True, db_column='logID')
+    itemID = models.ForeignKey('WTT_Log_Inspect_Items', on_delete=models.CASCADE, db_column='itemID')
 
     class Meta:
         db_table = 'WTT_Log_Inspect_Det'
