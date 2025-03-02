@@ -76,7 +76,7 @@ def getTruckData(request):
 @api_view(['GET'])
 def getTruck(request, pk):
     try:
-        truck = WTT_Truck.objects.get(id=pk)
+        truck = WTT_Truck.objects.get(truckID=pk)
     except ObjectDoesNotExist:
         return Response({'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -96,7 +96,7 @@ def addTruck(request):
 @api_view(['PUT'])
 def updateTruck(request, pk):
     try:
-        truck = WTT_Truck.objects.get(id=pk)
+        truck = WTT_Truck.objects.get(truckID=pk)
     except ObjectDoesNotExist:
         return Response({'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -110,7 +110,7 @@ def updateTruck(request, pk):
 @api_view(['DELETE'])
 def deleteTruck(request, pk):
     try:
-        truck = WTT_Truck.objects.get(id=pk)
+        truck = WTT_Truck.objects.get(truckID=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -128,7 +128,7 @@ def getTrailerData(request):
 @api_view(['GET'])
 def getTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(id=pk)
+        trailer = WTT_Trailer.objects.get(trailerid=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -148,7 +148,7 @@ def addTrailer(request):
 @api_view(['PUT'])
 def updateTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(id=pk)
+        trailer = WTT_Trailer.objects.get(trailerid=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -162,7 +162,7 @@ def updateTrailer(request, pk):
 @api_view(['DELETE'])
 def deleteTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(id=pk)
+        trailer = WTT_Trailer.objects.get(trailerid=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import api from '../api';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -18,25 +18,10 @@ const ManageUsers = () => {
   });
   const [editingUserId, setEditingUserId] = useState(null);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` }),
-    };
-  };
-
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/user/data/', {
-        headers: getAuthHeaders(),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUsers(data);
-      } else {
-        console.error('Failed to fetch users');
-      }
+      const { data } = await api.get('/api/user/data/');
+      setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -56,35 +41,26 @@ const ManageUsers = () => {
 
   const addUser = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/user/add/', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(formData),
+      await api.post('/api/user/add/', formData);
+      fetchUsers();
+      setFormData({
+        username: '',
+        password: '',
+        email: '',
+        first_name: '',
+        last_name: '',
+        employeeID: '',
+        address: '',
+        driver_license: '',
+        is_superuser: false,
+        is_active: true,
+        is_staff: true,
       });
-      if (res.ok) {
-        fetchUsers();
-        setFormData({
-          username: '',
-          password: '',
-          email: '',
-          first_name: '',
-          last_name: '',
-          employeeID: '',
-          address: '',
-          driver_license: '',
-          is_superuser: false,
-          is_active: true,
-          is_staff: true,
-        });
-      } else {
-        console.error('Failed to add user');
-      }
     } catch (error) {
       console.error('Error adding user:', error);
     }
   };
 
-  // Update user with a full payload using PUT
   const updateUser = async (id) => {
     // Create a complete payload
     const payload = { ...formData };
@@ -93,47 +69,31 @@ const ManageUsers = () => {
       delete payload.password;
     }
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/user/update/${id}/`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(payload),
+      await api.put(`/api/user/update/${id}/`, payload);
+      fetchUsers();
+      setEditingUserId(null);
+      setFormData({
+        username: '',
+        password: '',
+        email: '',
+        first_name: '',
+        last_name: '',
+        employeeID: '',
+        address: '',
+        driver_license: '',
+        is_superuser: false,
+        is_active: true,
+        is_staff: true,
       });
-      if (res.ok) {
-        fetchUsers();
-        setEditingUserId(null);
-        setFormData({
-          username: '',
-          password: '',
-          email: '',
-          first_name: '',
-          last_name: '',
-          employeeID: '',
-          address: '',
-          driver_license: '',
-          is_superuser: false,
-          is_active: true,
-          is_staff: true,
-        });
-      } else {
-        console.error('Failed to update user');
-      }
     } catch (error) {
       console.error('Error updating user:', error);
     }
-  };  
+  };
 
-  // Delete user
   const deleteUser = async (id) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/user/delete/${id}/`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      if (res.ok) {
-        fetchUsers();
-      } else {
-        console.error('Failed to delete user');
-      }
+      await api.delete(`/api/user/delete/${id}/`);
+      fetchUsers();
     } catch (error) {
       console.error('Error deleting user:', error);
     }
@@ -158,7 +118,7 @@ const ManageUsers = () => {
 
   return (
     <div>
-      <h1>User Management</h1>
+      <h1>User Manager</h1>
       <div>
         <h2>{editingUserId ? 'Edit User' : 'Add User'}</h2>
         <input

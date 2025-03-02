@@ -22,7 +22,7 @@ class WTT_UserManager(BaseUserManager):
 class WTT_User(AbstractBaseUser, PermissionsMixin):
     
     id = models.AutoField(primary_key=True)
-    employeeID = models.CharField(max_length=100)
+    employeeID = models.CharField(max_length=100, unique=True)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     email = models.EmailField(max_length=100, unique=True)
@@ -45,7 +45,7 @@ class WTT_User(AbstractBaseUser, PermissionsMixin):
 
 
 class WTT_Truck(models.Model):
-    truckID = models.AutoField(primary_key=True)
+    truckID = models.IntegerField(primary_key=True)
     make_model = models.CharField(max_length=60)
     license_plate = models.CharField(max_length=8)
     odometer = models.IntegerField()
@@ -56,7 +56,7 @@ class WTT_Truck(models.Model):
         db_table = 'WTT_Truck'
 
 class WTT_Trailer(models.Model):
-    trailerID = models.AutoField(primary_key=True)
+    trailerID = models.IntegerField(primary_key=True)
     make_model = models.CharField(max_length=60)
     license_plate = models.CharField(max_length=8)
     carrier = models.CharField(max_length=30)
@@ -67,7 +67,7 @@ class WTT_Trailer(models.Model):
 
 class WTT_Log(models.Model):
     logID = models.IntegerField(primary_key=True)
-    userID = models.IntegerField()
+    employeeID = models.IntegerField()
     truckID = models.IntegerField()
     trailerID = models.IntegerField(null=True)
     trip = models.IntegerField()
