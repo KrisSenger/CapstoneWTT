@@ -50,11 +50,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TruckSerializer(serializers.ModelSerializer):
+    truckID = serializers.IntegerField(required=False)
+    
     class Meta:
         model = WTT_Truck
         fields = '__all__'
 
 class TrailerSerializer(serializers.ModelSerializer):
+    trailerID = serializers.IntegerField(required=False)
+    
     class Meta:
         model = WTT_Trailer
         fields = '__all__'
