@@ -233,7 +233,7 @@ def getItemData(request):
 @api_view(['GET'])
 def getItem(request, pk):
     try:
-        item = WTT_Log_Inspect_Items.objects.get(id=pk)
+        item = WTT_Log_Inspect_Items.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -253,7 +253,7 @@ def addItem(request):
 @api_view(['PUT'])
 def updateItem(request, pk):
     try:
-        item = WTT_Log_Inspect_Items.objects.get(id=pk)
+        item = WTT_Log_Inspect_Items.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -267,7 +267,7 @@ def updateItem(request, pk):
 @api_view(['DELETE'])
 def deleteItem(request, pk):
     try:
-        item = WTT_Log_Inspect_Items.objects.get(id=pk)
+        item = WTT_Log_Inspect_Items.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
