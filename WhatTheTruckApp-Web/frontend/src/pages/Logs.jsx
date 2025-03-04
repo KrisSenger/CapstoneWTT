@@ -34,6 +34,7 @@ function Logs() {
                         <th>Trip</th>
                         <th>Location</th>
                         <th>City</th>
+                        <th>Date</th>
                         <th>Load</th>
                         <th>Height</th>
                         <th>Defects en route</th>

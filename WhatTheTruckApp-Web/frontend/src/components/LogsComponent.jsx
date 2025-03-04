@@ -9,6 +9,7 @@ export default function LogsComponent({ log }) {
             <td>{log.trip}</td>
             <td>{log.location}</td>
             <td>{log.city}</td>
+            <td>{log.date}</td>
             <td>{log.load}</td>
             <td>{log.height}</td>
             <td>{log.defects_en_route}</td>
@@ -18,6 +19,7 @@ export default function LogsComponent({ log }) {
             <td className={log.declaration === 0 ? "text-red-500" : ""}>
             {log.declaration === 1 ? "yes" : "no"}
             </td>
+            <td>{log.signature}</td>
             <td>{log.signature}</td>
         </tr>
     );

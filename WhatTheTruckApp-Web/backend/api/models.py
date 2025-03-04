@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+from datetime import datetime
 
 # Create your models here.
 
@@ -73,6 +74,7 @@ class WTT_Log(models.Model):
     trip = models.IntegerField()
     location = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
+    date = models.DateTimeField(default=datetime.now, blank=True)
     load = models.IntegerField()
     height = models.IntegerField()
     defects_en_route = models.CharField(max_length=1000)
