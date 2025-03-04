@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+import ReturnHome from "../components/ReturnHome";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -118,6 +119,7 @@ const ManageUsers = () => {
 
   return (
     <div>
+      <ReturnHome />
       <h1>User Manager</h1>
       <div>
         <h2>{editingUserId ? 'Edit User' : 'Add User'}</h2>

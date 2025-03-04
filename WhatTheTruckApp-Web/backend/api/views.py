@@ -128,7 +128,7 @@ def getTrailerData(request):
 @api_view(['GET'])
 def getTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(trailerid=pk)
+        trailer = WTT_Trailer.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -162,7 +162,7 @@ def updateTrailer(request, pk):
 @api_view(['DELETE'])
 def deleteTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(trailerid=pk)
+        trailer = WTT_Trailer.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -181,7 +181,7 @@ def getLogData(request):
 @api_view(['GET'])
 def getLog(request, pk):
     try:
-        log = WTT_Log.objects.get(id=pk)
+        log = WTT_Log.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -201,7 +201,7 @@ def addLog(request):
 @api_view(['PUT'])
 def updateLog(request, pk):
     try:
-        log = WTT_Log.objects.get(id=pk)
+        log = WTT_Log.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -215,7 +215,7 @@ def updateLog(request, pk):
 @api_view(['DELETE'])
 def deleteLog(request, pk):
     try:
-        log = WTT_Log.objects.get(id=pk)
+        log = WTT_Log.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+import ReturnHome from "../components/ReturnHome";
 
 const ManageEquipment = () => {
   // Truck states
@@ -187,6 +188,7 @@ const ManageEquipment = () => {
 
   return (
     <div>
+        <ReturnHome />
       <h1>Equipment Manager</h1>
       {/* Truck Management Section */}
       <div>
