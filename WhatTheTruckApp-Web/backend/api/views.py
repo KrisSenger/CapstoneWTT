@@ -185,8 +185,26 @@ def getLog(request, pk):
     except ObjectDoesNotExist:
         return Response({'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     
+    # Serialize the log data
     serializer = LogSerializer(log, many=False)
-    return Response(serializer.data)
+    log_data = serializer.data
+
+    # Get defective items for this log from the WTT_Log_Inspect_Det table.
+    defective_items_qs = WTT_Log_Inspect_Det.objects.filter(logID=log)
+    defective_items = []
+    for det in defective_items_qs:
+        # det.itemID is a foreign key to WTT_Log_Inspect_Items.
+        item = det.itemID
+        defective_items.append({
+            "itemID": item.itemID,
+            "item_name": item.item_name,
+        })
+
+    # Add defective items to the serialized log data.
+    log_data["defective_items"] = defective_items
+
+    return Response(log_data)
+
 
 @api_view(['POST'])
 def addLog(request):

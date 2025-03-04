@@ -21,7 +21,7 @@ const WelcomeMessage = () => {
     // Display a welcome message with the logged-in user's name
     return (
         <div>
-            <h1>Welcome,  {user ? user.username : 'Guest'}!</h1>
+            <h1>Welcome,  {user ? user.first_name : 'Guest'}!</h1>
         </div>
     );
 };
