@@ -15,7 +15,9 @@ export default function LogsComponent({ log }) {
             <td>{log.incidents}</td>
             <td>{log.remarks}</td>
             <td>{log.pictures}</td>
-            <td>{log.declaration}</td>
+            <td className={log.declaration === 0 ? "text-red-500" : ""}>
+            {log.declaration === 1 ? "yes" : "no"}
+            </td>
             <td>{log.signature}</td>
         </tr>
     );
