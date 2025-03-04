@@ -28,6 +28,7 @@ function Logs() {
             <table>
                 <thead>
                     <tr>
+                        <th>Log ID</th>
                         <th>Employee ID</th>
                         <th>Truck ID</th>
                         <th>Trailer ID</th>
