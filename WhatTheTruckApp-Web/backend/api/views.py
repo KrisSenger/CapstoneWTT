@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
@@ -14,7 +14,12 @@ def getUserData(request):
     users = WTT_User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getCurUserData(request):
+    curuser = request.user  # Get the current user
+    serializer = UserSerializer(curuser)
+    return Response(serializer.data)
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def getUser(request, pk):
@@ -71,7 +76,7 @@ def getTruckData(request):
 @api_view(['GET'])
 def getTruck(request, pk):
     try:
-        truck = WTT_Truck.objects.get(id=pk)
+        truck = WTT_Truck.objects.get(truckID=pk)
     except ObjectDoesNotExist:
         return Response({'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -91,7 +96,7 @@ def addTruck(request):
 @api_view(['PUT'])
 def updateTruck(request, pk):
     try:
-        truck = WTT_Truck.objects.get(id=pk)
+        truck = WTT_Truck.objects.get(truckID=pk)
     except ObjectDoesNotExist:
         return Response({'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -105,7 +110,7 @@ def updateTruck(request, pk):
 @api_view(['DELETE'])
 def deleteTruck(request, pk):
     try:
-        truck = WTT_Truck.objects.get(id=pk)
+        truck = WTT_Truck.objects.get(truckID=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -123,7 +128,7 @@ def getTrailerData(request):
 @api_view(['GET'])
 def getTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(id=pk)
+        trailer = WTT_Trailer.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -143,7 +148,7 @@ def addTrailer(request):
 @api_view(['PUT'])
 def updateTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(id=pk)
+        trailer = WTT_Trailer.objects.get(trailerid=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -157,7 +162,7 @@ def updateTrailer(request, pk):
 @api_view(['DELETE'])
 def deleteTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(id=pk)
+        trailer = WTT_Trailer.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -176,12 +181,26 @@ def getLogData(request):
 @api_view(['GET'])
 def getLog(request, pk):
     try:
-        log = WTT_Log.objects.get(id=pk)
+        log = WTT_Log.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = LogSerializer(log, many=False)
-    return Response(serializer.data)
+    log_data = serializer.data
+
+    defective_items_qs = WTT_Log_Inspect_Det.objects.filter(logID=log)
+    defective_items = []
+    for det in defective_items_qs:
+        item = det.itemID
+        defective_items.append({
+            "detailID": det.detailID,
+            "itemID": item.itemID,
+            "item_name": item.item_name,
+        })
+
+    log_data["defective_items"] = defective_items
+
+    return Response(log_data)
 
 @api_view(['POST'])
 def addLog(request):
@@ -196,7 +215,7 @@ def addLog(request):
 @api_view(['PUT'])
 def updateLog(request, pk):
     try:
-        log = WTT_Log.objects.get(id=pk)
+        log = WTT_Log.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -210,7 +229,7 @@ def updateLog(request, pk):
 @api_view(['DELETE'])
 def deleteLog(request, pk):
     try:
-        log = WTT_Log.objects.get(id=pk)
+        log = WTT_Log.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Log not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -228,7 +247,7 @@ def getItemData(request):
 @api_view(['GET'])
 def getItem(request, pk):
     try:
-        item = WTT_Log_Inspect_Items.objects.get(id=pk)
+        item = WTT_Log_Inspect_Items.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -248,7 +267,7 @@ def addItem(request):
 @api_view(['PUT'])
 def updateItem(request, pk):
     try:
-        item = WTT_Log_Inspect_Items.objects.get(id=pk)
+        item = WTT_Log_Inspect_Items.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -262,7 +281,7 @@ def updateItem(request, pk):
 @api_view(['DELETE'])
 def deleteItem(request, pk):
     try:
-        item = WTT_Log_Inspect_Items.objects.get(id=pk)
+        item = WTT_Log_Inspect_Items.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
