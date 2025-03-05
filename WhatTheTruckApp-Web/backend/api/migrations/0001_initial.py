@@ -96,14 +96,16 @@ class Migration(migrations.Migration):
                 'db_table': 'WTT_User',
             },
         ),
-        migrations.CreateModel(
-            name='WTT_Log_Inspect_Det',
-            fields=[
-                ('logID', models.ForeignKey(db_column='logID', on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='api.wtt_log')),
-                ('itemID', models.ForeignKey(db_column='itemID', on_delete=django.db.models.deletion.CASCADE, to='api.wtt_log_inspect_items')),
-            ],
-            options={
-                'db_table': 'WTT_Log_Inspect_Det',
-            },
-        ),
+migrations.CreateModel(
+    name='WTT_Log_Inspect_Det',
+    fields=[
+        ('detailID', models.AutoField(primary_key=True, serialize=False)),
+        ('logID', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, db_column='logID', to='api.WTT_Log')),
+        ('itemID', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, db_column='itemID', to='api.WTT_Log_Inspect_Items')),
+    ],
+    options={
+        'db_table': 'WTT_Log_Inspect_Det',
+    },
+),
+
     ]

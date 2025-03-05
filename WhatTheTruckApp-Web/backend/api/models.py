@@ -96,8 +96,10 @@ class WTT_Log_Inspect_Items(models.Model):
         db_table = 'WTT_Log_Inspect_Items'
 
 class WTT_Log_Inspect_Det(models.Model):
-    logID = models.ForeignKey('WTT_Log', on_delete=models.CASCADE, primary_key=True, db_column='logID')
+    detailID = models.AutoField(primary_key=True, null=False)
+    logID = models.ForeignKey('WTT_Log', on_delete=models.CASCADE, db_column='logID')
     itemID = models.ForeignKey('WTT_Log_Inspect_Items', on_delete=models.CASCADE, db_column='itemID')
 
     class Meta:
         db_table = 'WTT_Log_Inspect_Det'
+
