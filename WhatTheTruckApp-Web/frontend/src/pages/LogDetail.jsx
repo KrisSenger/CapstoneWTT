@@ -44,15 +44,16 @@ function LogDetail() {
       </div>
 
       <h2 className="text-xl mt-8 mb-4">Defective Items</h2>
-      {log.defective_items && log.defective_items.length > 0 ? (
-        <ul className="list-disc ml-6">
-          {log.defective_items.map((item) => (
-            <li key={item.itemID}>{item.item_name}</li>
-          ))}
-        </ul>
+        {log.defective_items && log.defective_items.length > 0 ? (
+          <ul className="list-disc ml-6">
+            {log.defective_items.map((item) => (
+            <li key={item.detailID}>{item.item_name}</li>
+            ))}
+          </ul>
       ) : (
-        <p>No defective items found for this log.</p>
+      <p>No defective items found for this log.</p>
       )}
+
     </div>
   );
 }
