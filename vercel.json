@@ -1,16 +1,4 @@
 {
-<<<<<<< Updated upstream
-  "builds": [{
-      "src": "backend/wsgi.py",
-      "use": "@ardnt/vercel-python-wsgi",
-      "config": { "maxLambdaSize": "15mb" }
-  }],
-  "routes": [
-      {
-          "src": "/(.*)",
-          "dest": "backend/wsgi.py"
-      }
-=======
   "version": 2,
   "builds": [
     {
@@ -30,6 +18,5 @@
   "routes": [
     { "src": "/static/(.*)", "dest": "/static/$1" },
     { "src": "/(.*)", "dest": "api/wsgi.py" }
->>>>>>> Stashed changes
   ]
 }
