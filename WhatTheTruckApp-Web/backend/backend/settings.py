@@ -30,9 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l_#vp@6ea6@!-&d#vvkl1=#gg_9a^qsw(keg$9s*-d!x6z!o9d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG") != "False"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", ".vercel.app", ".now.sh"]
 
 REST_FRAMEWORK = {  
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "corsheaders",
+    "whitenoise.runserver_nostatic",
 ]
 
 AUTH_USER_MODEL = "api.wtt_user"
@@ -73,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -159,3 +161,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles", "static")
