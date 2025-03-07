@@ -7,11 +7,13 @@ const GoBack = () => {
   return (
     <button
       onClick={() => navigate(-1)}
-      className="mb-4 
+      className="mb-1
         text-orange-500 
-        hover:font-bold"
+        font-bold
+        hover:font-extrabold"
     >
-      &larr; Go Back
+      {/* &larr;  */}
+      &lt; Go Back
     </button>
   );
 };

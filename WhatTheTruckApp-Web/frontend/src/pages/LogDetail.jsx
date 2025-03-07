@@ -9,51 +9,212 @@ function LogDetail() {
   const [log, setLog] = useState(null);
 
   useEffect(() => {
-    api.get(`/api/log/${id}/`)
+    api
+      .get(`/api/log/${id}/`)
       .then((response) => setLog(response.data))
       .catch((error) => console.error("Error fetching log details:", error));
   }, [id]);
 
   if (!log) return <div>Loading...</div>;
 
+  // Destructure inspection_items provided by the API
+  const {
+    truck_items_group1 = [],
+    truck_items_group2 = [],
+    truck_items_group3 = [],
+    trailer_items = [],
+  } = log.inspection_items || {};
+
+  // Determine if any item is defective, if any item is defective, the log is considered defective (may change later)
+  const allItems = [
+    ...truck_items_group1,
+    ...truck_items_group2,
+    ...truck_items_group3,
+    ...trailer_items,
+  ];
+  const anyDefects = allItems.some((item) => item.defective);
+
   return (
-    <div className="p-4">
+    <div className="max-w-6xl mx-auto p-4 bg-white shadow-md">
       <GoBack />
-      <h1 className="text-2xl mb-4">Log Detail for ID: {log.logID}</h1>
-      <div>
-        <p><strong>Employee ID:</strong> {log.employeeID}</p>
-        <p><strong>Truck ID:</strong> {log.truckID}</p>
-        <p><strong>Trailer ID:</strong> {log.trailerID}</p>
-        <p><strong>Trip:</strong> {log.trip === 1 ? "Post trip" : "Pre trip"}</p>
-        <p><strong>Location:</strong> {log.location}</p>
-        <p><strong>City:</strong> {log.city}</p>
-        <p><strong>Date:</strong> {FormatDate(log.date)}</p>
-        <p><strong>Load:</strong> {log.load}</p>
-        <p><strong>Height:</strong> {log.height}</p>
-        <p><strong>Defects en route:</strong> {log.defects_en_route}</p>
-        <p><strong>Incidents:</strong> {log.incidents}</p>
-        <p><strong>Remarks:</strong> {log.remarks}</p>
-        <p><strong>Pictures:</strong> {log.pictures}</p>
+      <h1 className="text-2xl font-bold text-center mb-4 uppercase">
+        Driver's Daily Vehicle Inspection Report
+      </h1>
+
+      {/* Basic Log Info */}
+      <div className="flex justify-between flex-wrap border-b pb-3 mb-4">
+        <div className="mb-2">
         <p>
-          <strong>Declaration:</strong> 
-          <span className={log.declaration === 0 ? "text-red-500" : ""}>
-            {log.declaration === 1 ? " yes" : " no"}
-          </span>
-        </p>
-        <p><strong>Signature:</strong> {log.signature}</p>
+            <strong>LOG ID:</strong> {log.logID}
+          </p>
+          <p>
+            <strong>EMPLOYEE ID:</strong> {log.employeeID}
+          </p>
+          <p>
+            <strong>TRUCKk ID:</strong> {log.truckID}
+          </p>
+          <p>
+            <strong>TRAILER ID:</strong> {log.trailerID}
+          </p>
+        </div>
+        <div className="mb-2">
+          <p>
+            <strong>TRIP:</strong> {log.trip === 1 ? "Post Trip" : "Pre Trip"}
+          </p>
+          <p>
+            <strong>DATE:</strong> {FormatDate(log.date)}
+          </p>
+          <p>
+            <strong>LOCATION:</strong> {log.location}
+          </p>
+          <p>
+            <strong>CITY:</strong> {log.city}
+          </p>
+          <p>
+            <strong>TRUCK JURISDICTION:</strong> {log.truck_jurisdiction}
+          </p>
+          <p>
+            <strong>TRAILER JURISDICTION:</strong> {log.trailer_jurisdiction}
+          </p>
+        </div>
       </div>
 
-      <h2 className="text-xl mt-8 mb-4">Defective Items</h2>
-        {log.defective_items && log.defective_items.length > 0 ? (
-          <ul className="list-disc ml-6">
-            {log.defective_items.map((item) => (
-            <li key={item.detailID}>{item.item_name}</li>
+      {/* Additional Details */}
+      <div className="flex justify-between flex-wrap mb-4">
+        <div className="mb-2">
+          <p>
+            <strong>LOAD:</strong> {log.load}
+          </p>
+          <p>
+            <strong>HEIGHT:</strong> {log.height}
+          </p>
+          <p>
+            <strong>INCIDENTS:</strong> {log.incidents}
+          </p>
+        </div>
+        <div className="mb-2">
+          <p>
+            <strong>Declaration:</strong>{" "}
+            <span className={log.declaration === 0 ? "text-red-500" : ""}>
+              {log.declaration === 1 ? "Yes" : "No"}
+            </span>
+          </p>
+          <p>
+            <strong>Driver Name:</strong> {log.driver_name}
+          </p>
+          <p>
+            <strong>Signature:</strong> {log.signature}
+          </p>
+        </div>
+      </div>
+
+      {/* Defects Found / No Defects Found */}
+      <div className="border-t border-b border-gray-300 py-2 mb-4 flex space-x-8">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            className="mr-2 accent-orange-500"
+            checked={!anyDefects}
+            readOnly
+          />
+          <span>No Defects Found</span>
+        </label>
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            className="mr-2 accent-orange-500"
+            checked={anyDefects}
+            readOnly
+          />
+          <span>Defects Found</span>
+        </label>
+      </div>
+
+      <h2 className="text-xl font-semibold mb-2">
+        Check any defective item and give details under Remarks:
+      </h2>
+      {/* Checkbox section */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Tractor / Truck</h3>
+          <ul className="list-none space-y-1">
+            {truck_items_group1.map((item) => (
+              <li key={item.itemID} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="mr-2 accent-orange-500"
+                  checked={item.defective}
+                  readOnly
+                />
+                <span className="text-sm">{item.item_name}</span>
+              </li>
             ))}
           </ul>
-      ) : (
-      <p>No defective items found for this log.</p>
-      )}
+        </div>
 
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Tractor / Truck</h3>
+          <ul className="list-none space-y-1">
+            {truck_items_group2.map((item) => (
+              <li key={item.itemID} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="mr-2 accent-orange-500"
+                  checked={item.defective}
+                  readOnly
+                />
+                <span className="text-sm">{item.item_name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Tractor / Truck</h3>
+          <ul className="list-none space-y-1">
+            {truck_items_group3.map((item) => (
+              <li key={item.itemID} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="mr-2 accent-orange-500"
+                  checked={item.defective}
+                  readOnly
+                />
+                <span className="text-sm">{item.item_name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Trailer</h3>
+          <ul className="list-none space-y-1">
+            {trailer_items.map((item) => (
+              <li key={item.itemID} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="mr-2 accent-orange-500"
+                  checked={item.defective}
+                  readOnly
+                />
+                <span className="text-sm">{item.item_name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Remarks Section */}
+      <div className="mt-6">
+      <p>
+            <strong>Defects en route:</strong> {log.defects_en_route}
+          </p>
+        <h2 className="text-xl font-semibold mb-2">Remarks</h2>
+        <p className="border p-2 min-h-[80px]">{log.remarks}</p>
+      </div>
+      <p>
+        <strong>Pictures:</strong> {log.pictures}
+      </p>
     </div>
   );
 }

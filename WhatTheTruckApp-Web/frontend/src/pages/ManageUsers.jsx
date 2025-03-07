@@ -187,7 +187,18 @@ const ManageUsers = () => {
               checked={formData.is_superuser}
               onChange={handleChange}
             />
-            Superuser
+            Super Admin
+          </label>
+        </div>
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="is_staff"
+              checked={formData.is_staff}
+              onChange={handleChange}
+            />
+            Supervisor
           </label>
         </div>
         <div>
@@ -199,17 +210,6 @@ const ManageUsers = () => {
               onChange={handleChange}
             />
             Active
-          </label>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="is_staff"
-              checked={formData.is_staff}
-              onChange={handleChange}
-            />
-            Staff
           </label>
         </div>
         {editingUserId ? (
