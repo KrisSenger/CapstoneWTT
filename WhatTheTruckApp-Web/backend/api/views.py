@@ -205,9 +205,15 @@ def getLog(request, pk):
 @api_view(['POST'])
 def addLog(request):
     serializer = LogSerializer(data=request.data)
-
     if serializer.is_valid():
-        serializer.save()
+        log = serializer.save()
+        # Trigger a notification if declaration is 0, or defects_en_route/incidents are non-empty.
+        if (log.declaration == 0 or 
+            (log.defects_en_route and log.defects_en_route.strip()) or 
+            (log.incidents and log.incidents.strip())):
+            Notification.objects.create(
+                message=f"New defective log #{log.logID} submitted by employee #{log.employeeID}."
+            )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -287,3 +293,21 @@ def deleteItem(request, pk):
     
     item.delete()
     return Response({'message': 'Item successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def addInspectionDetail(request):
+    serializer = LogInspectDetSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getNotifications(request):
+    if not request.user.is_staff:
+        return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+    
+    notifications = Notification.objects.filter(read=False).order_by('-created_at')
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)

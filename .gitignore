@@ -171,3 +171,7 @@ cython_debug/
 .pypirc
 
 node_modules
+
+# automated testing
+/chrome-win64
+/Driver_notes

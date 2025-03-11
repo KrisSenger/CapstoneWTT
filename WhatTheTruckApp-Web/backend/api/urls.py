@@ -32,5 +32,9 @@ urlpatterns = [
     path('log/add/', addLog, name='add_log'),
     path('log/update/<int:pk>/', updateLog, name='update_log'),
     path('log/delete/<int:pk>/', deleteLog, name='delete_log'),
+
+    # Inspection Item URLs
+    path('log-inspect-det/add/', addInspectionDetail, name='add_inspection_detail'),
     
+    path('notifications/', getNotifications, name='get_notifications'),
 ]
