@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import api from "../api";
-import GoBack from "../components/GoBack";
-import FormatDate from "../components/FormatDate";
+import FormatDate from "./FormatDate";
 
-function LogDetail() {
-  const { id } = useParams();
+function LogDetail({ id }) {
   const [log, setLog] = useState(null);
 
   useEffect(() => {
+    console.info("Fetching log details for log ID:", id);
     api
       .get(`/api/log/${id}/`)
       .then((response) => setLog(response.data))
@@ -36,7 +34,7 @@ function LogDetail() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-white shadow-md">
-      <GoBack />
+
       <h1 className="text-2xl font-bold text-center mb-4 uppercase">
         Driver's Daily Vehicle Inspection Report
       </h1>
@@ -44,7 +42,7 @@ function LogDetail() {
       {/* Basic Log Info */}
       <div className="flex justify-between flex-wrap border-b pb-3 mb-4">
         <div className="mb-2">
-        <p>
+          <p>
             <strong>LOG ID:</strong> {log.logID}
           </p>
           <p>
@@ -206,9 +204,9 @@ function LogDetail() {
 
       {/* Remarks Section */}
       <div className="mt-6">
-      <p>
-            <strong>Defects en route:</strong> {log.defects_en_route}
-          </p>
+        <p>
+          <strong>Defects en route:</strong> {log.defects_en_route}
+        </p>
         <h2 className="text-xl font-semibold mb-2">Remarks</h2>
         <p className="border p-2 min-h-[80px]">{log.remarks}</p>
       </div>
