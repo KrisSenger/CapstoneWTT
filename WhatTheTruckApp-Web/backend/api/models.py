@@ -75,12 +75,12 @@ class WTT_Log(models.Model):
     location = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
     date = models.DateTimeField(default=datetime.now, blank=True)
-    load = models.IntegerField()
-    height = models.IntegerField()
-    defects_en_route = models.CharField(max_length=1000)
-    incidents = models.CharField(max_length=1000)
-    remarks = models.CharField(max_length=1000)
-    pictures = models.CharField(max_length=100)
+    load = models.IntegerField(null=True)
+    height = models.IntegerField(null=True)
+    defects_en_route = models.CharField(max_length=1000, null=True)
+    incidents = models.CharField(max_length=1000, null=True)
+    remarks = models.CharField(max_length=1000, null=True)
+    pictures = models.CharField(max_length=1000, null=True)
     declaration = models.IntegerField()
     signature = models.CharField(max_length=100)
 
@@ -102,4 +102,14 @@ class WTT_Log_Inspect_Det(models.Model):
 
     class Meta:
         db_table = 'WTT_Log_Inspect_Det'
+
+class Notification(models.Model):
+    id = models.AutoField(primary_key=True)
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.message} ({self.created_at})"
+
 

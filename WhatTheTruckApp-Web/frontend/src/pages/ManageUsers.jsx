@@ -15,7 +15,7 @@ const ManageUsers = () => {
     driver_license: '',
     is_superuser: false,
     is_active: true,
-    is_staff: true,
+    is_staff: false,
   });
   const [editingUserId, setEditingUserId] = useState(null);
 

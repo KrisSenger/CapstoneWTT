@@ -89,7 +89,7 @@ class LogSerializer(serializers.ModelSerializer):
         from .models import WTT_User
         try:
             user = WTT_User.objects.get(employeeID=obj.employeeID)
-            return user.first_name,' ', user.last_name
+            return f"{user.first_name} {user.last_name}"
         except WTT_User.DoesNotExist:
             return None
 
@@ -130,4 +130,16 @@ class LogSerializer(serializers.ModelSerializer):
 class LogInspectItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = WTT_Log_Inspect_Items
+        fields = '__all__'
+        
+
+class LogInspectDetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WTT_Log_Inspect_Det
+        fields = '__all__'
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'

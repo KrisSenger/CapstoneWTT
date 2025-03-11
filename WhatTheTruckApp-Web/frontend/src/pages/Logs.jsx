@@ -2,6 +2,7 @@ import { useState, useEffect, use } from "react";
 import api from "../api";
 import LogsComponent from "../components/LogsComponent";
 import ReturnHome from "../components/ReturnHome";
+import Header from "../components/Header";
 
 function Logs() {
     const [logs, setLogs] = useState([]);
@@ -24,6 +25,7 @@ function Logs() {
         <div>
             <ReturnHome />
             <br />
+            <Header />
             <h1>Logs</h1>
             <table>
                 <thead>
