@@ -106,10 +106,13 @@ class WTT_Log_Inspect_Det(models.Model):
 class Notification(models.Model):
     id = models.AutoField(primary_key=True)
     message = models.CharField(max_length=255)
+    log_id = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.message} ({self.created_at})"
+
+
 
 
