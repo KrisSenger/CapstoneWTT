@@ -67,12 +67,9 @@ const NotificationIcon = () => {
     // Close the dropdown immediately
     setShowNotifications(false);
   
-    // Check if the message indicates a defective log and extract the log ID
-    const defectiveLogRegex = /defective log #(\d+)/i;
-    const match = notification.message.match(defectiveLogRegex);
-    if (match && match[1]) {
-      const logId = parseInt(match[1], 10);
-      setSelectedLogId(logId);
+    // Use the log_id from the notification payload
+    if (notification.log_id) {
+      setSelectedLogId(notification.log_id);
       setShowLogDetail(true);
     }
   };  

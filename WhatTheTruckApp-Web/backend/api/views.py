@@ -207,13 +207,14 @@ def addLog(request):
     serializer = LogSerializer(data=request.data)
     if serializer.is_valid():
         log = serializer.save()
-        # Trigger a notification if declaration is 0, or defects_en_route/incidents are non-empty.
-        if (log.declaration == 0 or 
-            (log.defects_en_route and log.defects_en_route.strip()) or 
-            (log.incidents and log.incidents.strip())):
-            Notification.objects.create(
-                message=f"New defective log #{log.logID} submitted by employee #{log.employeeID}."
-            )
+    if (log.declaration == 0 or 
+        (log.defects_en_route and log.defects_en_route.strip()) or 
+        (log.incidents and log.incidents.strip())):
+        Notification.objects.create(
+            message=f"New defective log #{log.logID} submitted by employee #{log.employeeID}.",
+            log_id=log.logID
+        )
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
