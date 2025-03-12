@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from .utils import get_driver_name
 
 class UserSerializer(serializers.ModelSerializer):
     is_superuser = serializers.BooleanField(required=False)
@@ -77,7 +78,7 @@ class LogSerializer(serializers.ModelSerializer):
             return truck.jurisdiction
         except WTT_Truck.DoesNotExist:
             return None
-        
+
     def get_trailer_jurisdiction(self, obj):
         from .models import WTT_Trailer
         try:
@@ -85,14 +86,9 @@ class LogSerializer(serializers.ModelSerializer):
             return trailer.jurisdiction
         except WTT_Trailer.DoesNotExist:
             return None
-        
+
     def get_driver_name(self, obj):
-        from .models import WTT_User
-        try:
-            user = WTT_User.objects.get(employeeID=obj.employeeID)
-            return f"{user.first_name} {user.last_name}"
-        except WTT_User.DoesNotExist:
-            return None
+        return get_driver_name(obj)
 
     def get_inspection_items(self, obj):
         from .models import WTT_Log_Inspect_Items, WTT_Log_Inspect_Det
