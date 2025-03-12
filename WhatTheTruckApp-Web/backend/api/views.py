@@ -6,6 +6,7 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from .serializers import *
+from .utils import get_driver_name
 
 # User Views
 @api_view(['GET'])
@@ -207,14 +208,14 @@ def addLog(request):
     serializer = LogSerializer(data=request.data)
     if serializer.is_valid():
         log = serializer.save()
-    if (log.declaration == 0 or 
-        (log.defects_en_route and log.defects_en_route.strip()) or 
-        (log.incidents and log.incidents.strip())):
-        Notification.objects.create(
-            message=f"New defective log #{log.logID} submitted by employee #{log.employeeID}.",
-            log_id=log.logID
-        )
-
+        if (log.declaration == 0 or 
+            (log.defects_en_route and log.defects_en_route.strip()) or 
+            (log.incidents and log.incidents.strip())):
+            driver_name = get_driver_name(log)
+            Notification.objects.create(
+                message=f"New defective log #{log.logID} submitted by driver {driver_name}.",
+                log_id=log.logID
+            )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
