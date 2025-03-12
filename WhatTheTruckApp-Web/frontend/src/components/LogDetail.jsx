@@ -23,14 +23,7 @@ function LogDetail({ id }) {
     trailer_items = [],
   } = log.inspection_items || {};
 
-  // Determine if any item is defective, if any item is defective, the log is considered defective (may change later)
-  const allItems = [
-    ...truck_items_group1,
-    ...truck_items_group2,
-    ...truck_items_group3,
-    ...trailer_items,
-  ];
-  const anyDefects = allItems.some((item) => item.defective);
+  const anyDefects = log.any_defects;
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-white shadow-md">
