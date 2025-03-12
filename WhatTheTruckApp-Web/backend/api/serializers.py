@@ -68,6 +68,7 @@ class LogSerializer(serializers.ModelSerializer):
     trailer_jurisdiction = serializers.SerializerMethodField()
     driver_name = serializers.SerializerMethodField()
     inspection_items = serializers.SerializerMethodField()
+    any_defects = serializers.SerializerMethodField()
 
     def get_truck_jurisdiction(self, obj):
         from .models import WTT_Truck
@@ -95,14 +96,11 @@ class LogSerializer(serializers.ModelSerializer):
 
     def get_inspection_items(self, obj):
         from .models import WTT_Log_Inspect_Items, WTT_Log_Inspect_Det
-        # Get all items
         all_items = list(WTT_Log_Inspect_Items.objects.all().order_by('itemID'))
-        # Get defective items for this log
         defective_ids = set(
             WTT_Log_Inspect_Det.objects.filter(logID=obj)
             .values_list('itemID__itemID', flat=True)
         )
-        # Predefined grouping based on itemID (adjust as needed)
         group1_ids = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]
         group2_ids = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
         group3_ids = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
@@ -121,6 +119,16 @@ class LogSerializer(serializers.ModelSerializer):
             'truck_items_group3': [serialize_item(i) for i in all_items if i.itemID in group3_ids],
             'trailer_items': [serialize_item(i) for i in all_items if i.itemID in trailer_ids],
         }
+
+    def get_any_defects(self, obj):
+        items = self.get_inspection_items(obj)
+        all_items = (
+            items.get('truck_items_group1', []) +
+            items.get('truck_items_group2', []) +
+            items.get('truck_items_group3', []) +
+            items.get('trailer_items', [])
+        )
+        return any(item['defective'] for item in all_items)
 
     class Meta:
         model = WTT_Log

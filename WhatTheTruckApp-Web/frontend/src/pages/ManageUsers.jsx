@@ -14,8 +14,8 @@ const ManageUsers = () => {
     address: '',
     driver_license: '',
     is_superuser: false,
-    is_active: true,
     is_staff: false,
+    is_active: true,
   });
   const [editingUserId, setEditingUserId] = useState(null);
 
@@ -54,8 +54,8 @@ const ManageUsers = () => {
         address: '',
         driver_license: '',
         is_superuser: false,
-        is_active: true,
         is_staff: true,
+        is_active: true,
       });
     } catch (error) {
       console.error('Error adding user:', error);
@@ -83,8 +83,8 @@ const ManageUsers = () => {
         address: '',
         driver_license: '',
         is_superuser: false,
-        is_active: true,
         is_staff: true,
+        is_active: true,
       });
     } catch (error) {
       console.error('Error updating user:', error);
@@ -112,8 +112,8 @@ const ManageUsers = () => {
       address: user.address || '',
       driver_license: user.driver_license || '',
       is_superuser: user.is_superuser ?? false,
-      is_active: user.is_active ?? true,
       is_staff: user.is_staff ?? true,
+      is_active: user.is_active ?? true,
     });
   };
 
@@ -232,9 +232,9 @@ const ManageUsers = () => {
               <th>Password</th>
               <th>Address</th>
               <th>Driver License</th>
-              <th>Superuser</th>
+              <th>Super Admin</th>
+              <th>Supervisor</th>
               <th>Active</th>
-              <th>Staff</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -251,8 +251,8 @@ const ManageUsers = () => {
                 <td>{user.address}</td>
                 <td>{user.driver_license}</td>
                 <td>{user.is_superuser ? 'Yes' : 'No'}</td>
-                <td>{user.is_active ? 'Yes' : 'No'}</td>
                 <td>{user.is_staff ? 'Yes' : 'No'}</td>
+                <td>{user.is_active ? 'Yes' : 'No'}</td>
                 <td>
                   <button onClick={() => startEditing(user)}>Edit</button>
                   <button onClick={() => deleteUser(user.id)}>Delete</button>

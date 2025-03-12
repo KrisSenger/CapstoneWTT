@@ -35,6 +35,8 @@ urlpatterns = [
 
     # Inspection Item URLs
     path('log-inspect-det/add/', addInspectionDetail, name='add_inspection_detail'),
-    
+
+    path('notifications/<int:pk>/read/', markNotificationAsRead, name='mark_notification_read'),
+
     path('notifications/', getNotifications, name='get_notifications'),
 ]
