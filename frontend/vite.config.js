@@ -8,7 +8,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    port: 5173, // Ensure this matches your `docker run` port
-    host: '0.0.0.0' // Crucial for Docker to expose the app
+    port: 5173,
+    host: '0.0.0.0' 
     }
 })
