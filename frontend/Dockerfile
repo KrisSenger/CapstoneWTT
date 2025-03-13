@@ -1,21 +1,20 @@
-# Step 1: Build the React app using Vite
-FROM node:18 AS build
+# Use official Node.js image as base
+FROM node:20-alpine
 
+# Set working directory
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+# Copy package files first for better caching
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install --frozen-lockfile
+
+# Copy the rest of the project
 COPY . .
-RUN npm run build
 
-# Step 2: Serve the app
-FROM node:18 AS production
+# Expose Vite's default port
+EXPOSE 5173
 
-WORKDIR /app
-
-# install static file server
-RUN npm install -g serve
-COPY --from=build /app/dist /app/dist
-
-EXPOSE 3000
-
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Start Vite development server
+CMD ["npm", "run", "dev", "--", "0.0.0.0"]

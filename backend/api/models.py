@@ -21,6 +21,17 @@ class WTT_UserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 class WTT_User(AbstractBaseUser, PermissionsMixin):
+
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='wtt_user_set',   
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='wtt_user_permission_set',
+        blank=True
+    )
     
     id = models.AutoField(primary_key=True)
     employeeID = models.CharField(max_length=100, unique=True)
