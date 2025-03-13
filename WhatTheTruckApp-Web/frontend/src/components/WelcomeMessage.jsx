@@ -1,13 +1,10 @@
 import React, { useState, useEffect, use } from 'react';
-import axios from 'axios';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
 import api from '../api';
 
 
 
 const WelcomeMessage = () => {
     const [user, setUser] = useState([]);
-    const id = 5;
     useEffect(() => {
         getUser();
     }, []);
