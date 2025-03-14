@@ -6,6 +6,10 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from .serializers import *
+from .utils import get_driver_name
+
+def login_view(request):
+    return render(request, 'Login.jsx')
 
 # User Views
 @api_view(['GET'])
@@ -205,9 +209,16 @@ def getLog(request, pk):
 @api_view(['POST'])
 def addLog(request):
     serializer = LogSerializer(data=request.data)
-
     if serializer.is_valid():
-        serializer.save()
+        log = serializer.save()
+        if (log.declaration == 0 or 
+            (log.defects_en_route and log.defects_en_route.strip()) or 
+            (log.incidents and log.incidents.strip())):
+            driver_name = get_driver_name(log)
+            Notification.objects.create(
+                message=f"New defective log #{log.logID} submitted by driver {driver_name}.",
+                log_id=log.logID
+            )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -287,3 +298,35 @@ def deleteItem(request, pk):
     
     item.delete()
     return Response({'message': 'Item successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def addInspectionDetail(request):
+    serializer = LogInspectDetSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def markNotificationAsRead(request, pk):
+    try:
+        notification = Notification.objects.get(pk=pk)
+    except Notification.DoesNotExist:
+        return Response({'error': 'Notification not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    notification.read = True
+    notification.save()
+    serializer = NotificationSerializer(notification)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getNotifications(request):
+    if not request.user.is_staff:
+        return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+    
+    notifications = Notification.objects.filter(read=False).order_by('-created_at')
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)

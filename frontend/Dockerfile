@@ -1,20 +1,29 @@
-# Use official Node.js image as base
-FROM node:20-alpine
+# Use node:latest as the builder image
+FROM node:latest AS builder
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy package files first for better caching
-COPY package.json package-lock.json ./
+# Copy package.json and install app dependencies
+COPY package.json .
+RUN npm install
 
-# Install dependencies
-RUN npm install --frozen-lockfile
+# Copy other project files and build
+COPY . ./
+RUN npm run build
 
-# Copy the rest of the project
-COPY . .
+# use nginx to serve the app
+FROM nginx:latest
 
-# Expose Vite's default port
-EXPOSE 5173
+# Overwrite default nginx config with ours
+RUN rm -rf /etc/nginx/conf.d/default.conf
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Start Vite development server
-CMD ["npm", "run", "dev", "--", "0.0.0.0"]
+# Copy over the build files from the builder image
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Set the working directory
+WORKDIR /usr/share/nginx/html
+
+# Start nginx server
+CMD ["/bin/bash", "-c", "nginx -g \"daemon off;\""]

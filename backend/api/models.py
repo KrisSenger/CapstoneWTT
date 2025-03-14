@@ -21,17 +21,6 @@ class WTT_UserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 class WTT_User(AbstractBaseUser, PermissionsMixin):
-
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='wtt_user_set',   
-        blank=True
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='wtt_user_permission_set',
-        blank=True
-    )
     
     id = models.AutoField(primary_key=True)
     employeeID = models.CharField(max_length=100, unique=True)
@@ -86,12 +75,12 @@ class WTT_Log(models.Model):
     location = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
     date = models.DateTimeField(default=datetime.now, blank=True)
-    load = models.IntegerField()
-    height = models.IntegerField()
-    defects_en_route = models.CharField(max_length=1000)
-    incidents = models.CharField(max_length=1000)
-    remarks = models.CharField(max_length=1000)
-    pictures = models.CharField(max_length=100)
+    load = models.IntegerField(null=True)
+    height = models.IntegerField(null=True)
+    defects_en_route = models.CharField(max_length=1000, null=True)
+    incidents = models.CharField(max_length=1000, null=True)
+    remarks = models.CharField(max_length=1000, null=True)
+    pictures = models.CharField(max_length=1000, null=True)
     declaration = models.IntegerField()
     signature = models.CharField(max_length=100)
 
@@ -113,4 +102,16 @@ class WTT_Log_Inspect_Det(models.Model):
 
     class Meta:
         db_table = 'WTT_Log_Inspect_Det'
+
+class Notification(models.Model):
+    id = models.AutoField(primary_key=True)
+    message = models.CharField(max_length=255)
+    log_id = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.message} ({self.created_at})"
+
+
 

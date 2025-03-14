@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi"; // Import React Icons
 import { useNavigate } from "react-router-dom";
-//import api from "../api";
-//import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import api from "../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import logo from "../assets/images/TruckImage.avif";
 
 function Login({ route }) {
@@ -130,4 +130,3 @@ function Login({ route }) {
 }
 
 export default Login;
-
