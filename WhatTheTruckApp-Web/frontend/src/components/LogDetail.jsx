@@ -42,7 +42,7 @@ function LogDetail({ id }) {
             <strong>EMPLOYEE ID:</strong> {log.employeeID}
           </p>
           <p>
-            <strong>TRUCKk ID:</strong> {log.truckID}
+            <strong>TRUCK ID:</strong> {log.truckID}
           </p>
           <p>
             <strong>TRAILER ID:</strong> {log.trailerID}
