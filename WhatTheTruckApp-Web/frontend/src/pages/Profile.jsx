@@ -1,9 +1,12 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api';
-import ReturnHome from "../components/ReturnHome";
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
 
 function Profile() {
     const [user, setUser] = useState([]);
+    const [darkMode, setDarkMode] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     useEffect(() => {
         getUser();
     }, []);
@@ -13,10 +16,21 @@ function Profile() {
             .then((data) => { setUser(data); console.log(data) })
             .catch((error) => console.error(error));
     }
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+    };
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
     return (
         <div>
-            <ReturnHome />
-            <h1>Profile</h1>
+            <Header darkMode={darkMode}
+                toggleDarkMode={toggleDarkMode}
+                toggleSidebar={toggleSidebar} />
+            <Sidebar isSidebarOpen={isSidebarOpen}>
+                <h1>Profile</h1>
+            </Sidebar>
         </div>
     );
 }
