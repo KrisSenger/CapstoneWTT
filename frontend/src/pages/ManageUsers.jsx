@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import ReturnHome from "../components/ReturnHome";
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +19,8 @@ const ManageUsers = () => {
     is_active: true,
   });
   const [editingUserId, setEditingUserId] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -116,152 +119,162 @@ const ManageUsers = () => {
       is_active: user.is_active ?? true,
     });
   };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
   return (
     <div>
-      <ReturnHome />
-      <h1>User Manager</h1>
-      <div>
-        <h2>{editingUserId ? 'Edit User' : 'Add User'}</h2>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="first_name"
-          placeholder="First Name"
-          value={formData.first_name}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="last_name"
-          placeholder="Last Name"
-          value={formData.last_name}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="employeeID"
-          placeholder="Employee ID"
-          value={formData.employeeID}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          value={formData.address}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="driver_license"
-          placeholder="Driver License"
-          value={formData.driver_license}
-          onChange={handleChange}
-        />
+      <Header darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode}
+        toggleSidebar={toggleSidebar} />
+      <Sidebar isSidebarOpen={isSidebarOpen}>
+        <h1>User Manager</h1>
         <div>
-          <label>
-            <input
-              type="checkbox"
-              name="is_superuser"
-              checked={formData.is_superuser}
-              onChange={handleChange}
-            />
-            Super Admin
-          </label>
+          <h2>{editingUserId ? 'Edit User' : 'Add User'}</h2>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="first_name"
+            placeholder="First Name"
+            value={formData.first_name}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="last_name"
+            placeholder="Last Name"
+            value={formData.last_name}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="employeeID"
+            placeholder="Employee ID"
+            value={formData.employeeID}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={formData.address}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="driver_license"
+            placeholder="Driver License"
+            value={formData.driver_license}
+            onChange={handleChange}
+          />
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                name="is_superuser"
+                checked={formData.is_superuser}
+                onChange={handleChange}
+              />
+              Super Admin
+            </label>
+          </div>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                name="is_staff"
+                checked={formData.is_staff}
+                onChange={handleChange}
+              />
+              Supervisor
+            </label>
+          </div>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                name="is_active"
+                checked={formData.is_active}
+                onChange={handleChange}
+              />
+              Active
+            </label>
+          </div>
+          {editingUserId ? (
+            <button onClick={() => updateUser(editingUserId)}>Update User</button>
+          ) : (
+            <button onClick={addUser}>Add User</button>
+          )}
         </div>
         <div>
-          <label>
-            <input
-              type="checkbox"
-              name="is_staff"
-              checked={formData.is_staff}
-              onChange={handleChange}
-            />
-            Supervisor
-          </label>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="is_active"
-              checked={formData.is_active}
-              onChange={handleChange}
-            />
-            Active
-          </label>
-        </div>
-        {editingUserId ? (
-          <button onClick={() => updateUser(editingUserId)}>Update User</button>
-        ) : (
-          <button onClick={addUser}>Add User</button>
-        )}
-      </div>
-      <div>
-        <h2>User List</h2>
-        <table border="1">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Employee ID</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Password</th>
-              <th>Address</th>
-              <th>Driver License</th>
-              <th>Super Admin</th>
-              <th>Supervisor</th>
-              <th>Active</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.employeeID}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.first_name}</td>
-                <td>{user.last_name}</td>
-                <td>{user.password}</td>
-                <td>{user.address}</td>
-                <td>{user.driver_license}</td>
-                <td>{user.is_superuser ? 'Yes' : 'No'}</td>
-                <td>{user.is_staff ? 'Yes' : 'No'}</td>
-                <td>{user.is_active ? 'Yes' : 'No'}</td>
-                <td>
-                  <button onClick={() => startEditing(user)}>Edit</button>
-                  <button onClick={() => deleteUser(user.id)}>Delete</button>
-                </td>
+          <h2>User List</h2>
+          <table border="1">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Employee ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Password</th>
+                <th>Address</th>
+                <th>Driver License</th>
+                <th>Super Admin</th>
+                <th>Supervisor</th>
+                <th>Active</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.employeeID}</td>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.first_name}</td>
+                  <td>{user.last_name}</td>
+                  <td>{user.password}</td>
+                  <td>{user.address}</td>
+                  <td>{user.driver_license}</td>
+                  <td>{user.is_superuser ? 'Yes' : 'No'}</td>
+                  <td>{user.is_staff ? 'Yes' : 'No'}</td>
+                  <td>{user.is_active ? 'Yes' : 'No'}</td>
+                  <td>
+                    <button onClick={() => startEditing(user)}>Edit</button>
+                    <button onClick={() => deleteUser(user.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Sidebar>
     </div>
   );
 };

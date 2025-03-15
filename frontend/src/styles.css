@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+* {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-duration: 200ms;
+}
 /* Auto-hide scrollbar when not scrolling */
 .scrollbar-auto::-webkit-scrollbar {
     width: 6px;

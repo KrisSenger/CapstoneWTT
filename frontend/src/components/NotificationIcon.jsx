@@ -4,6 +4,8 @@ import { ACCESS_TOKEN } from '../constants';
 import Popup from './Popup';
 import LogDetail from './LogDetail';
 
+const apiURL = import.meta.env.VITE_API_URL;
+
 const NotificationIcon = () => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [active, setActive] = useState(false);
@@ -14,7 +16,7 @@ const NotificationIcon = () => {
 
   const fetchNotifications = () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    axios.get('http://localhost:8000/api/notifications/', {
+    axios.get(`${apiURL}/api/notifications/`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -45,7 +47,7 @@ const NotificationIcon = () => {
 
   const markNotificationAsRead = (notificationId) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    axios.put(`http://localhost:8000/api/notifications/${notificationId}/read/`, {}, {
+    axios.put(`http://${apiURL}/api/notifications/${notificationId}/read/`, {}, {
       headers: {
         Authorization: `Bearer ${token}`
       }

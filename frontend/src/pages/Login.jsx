@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi"; // Import React Icons
 import { useNavigate } from "react-router-dom";
@@ -11,6 +12,7 @@ function Login({ route }) {
     const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -37,6 +39,7 @@ function Login({ route }) {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="relative h-screen w-full">
@@ -130,3 +133,4 @@ function Login({ route }) {
 }
 
 export default Login;
+
