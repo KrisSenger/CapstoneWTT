@@ -3,7 +3,7 @@ import api from "../api";
 import LogsComponent from "../components/LogsComponent";
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import LoadingCircle from "../components/loadingCircle";
+import LoadingCircle from "../components/LoadingCircle";
 
 function Logs() {
     const [logs, setLogs] = useState([]);

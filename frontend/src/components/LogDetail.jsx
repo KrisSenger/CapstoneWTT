@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import FormatDate from "./FormatDate";
-import LoadingCircle from "./loadingCircle";
+import LoadingCircle from "./LoadingCircle";
 
 function LogDetail({ id }) {
   const [log, setLog] = useState(null);
