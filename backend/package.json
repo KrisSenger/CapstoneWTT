@@ -1,0 +1,18 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "CapstoneWTT Django Backend",
+  "main": "manage.py",
+  "scripts": {
+    "start": "python manage.py runserver 0.0.0.0:8000",
+    "migrate": "python manage.py migrate",
+    "makemigrations": "python manage.py makemigrations"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "django-vite-plugin": "^4.0.4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.8",
+    "vite": "^6.1.1"
+  }
+}
