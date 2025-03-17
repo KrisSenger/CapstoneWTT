@@ -12,28 +12,22 @@ export default function LogsComponent({ log }) {
     <>
       <tr
         key={log.logID}
-        className="cursor-pointer hover:bg-gray-100"
+        className="cursor-pointer hover:bg-gray-100 even:bg-gray-50 transition duration-200 w-full"
         onClick={() => setShowPopup(true)}
       >
-        <td>{log.logID}</td>
-        <td>{log.employeeID}</td>
-        <td>{log.truckID}</td>
-        <td>{log.trailerID}</td>
-        <td>{log.trip === 1 ? "Post trip" : "Pre trip"}</td>
-        <td>{log.location}</td>
-        <td>{log.city}</td>
-        <td>{FormatDate(log.date)}</td>
-        <td>{log.load}</td>
-        <td>{log.height}</td>
-        <td>{log.defects_en_route}</td>
-        <td>{log.incidents}</td>
-        <td>{log.remarks}</td>
-        <td>{log.pictures}</td>
-        <td className={log.declaration === 0 ? "text-red-500" : ""}>
-          {log.declaration === 1 ? "yes" : "no"}
+        <td className="p-3 border border-gray-300 w-24">{log.logID}</td>
+        <td className="p-3 border border-gray-300 w-32">{log.employeeID}</td>
+        <td className="p-3 border border-gray-300 w-32">{log.truckID}</td>
+        <td className="p-3 border border-gray-300 w-32">{log.trailerID}</td>
+        <td className="p-3 border border-gray-300 w-40">{FormatDate(log.date)}</td>
+        <td className="p-3 border border-gray-300 w-32">
+          <span
+            className={`px-3 py-1 text-sm font-semibold rounded-full text-white ${log.declaration === 1 ? "bg-green-500" : "bg-red-500"
+              }`}
+          >
+            {log.declaration === 1 ? "No issues!" : "Too many issues!"}
+          </span>
         </td>
-        <td>{log.signature}</td>
-
       </tr>
 
       {showPopup && (
