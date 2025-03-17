@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Popup({ children, onClose }) {
     return (
-        <div className="fixed inset-0 z-10 flex items-center justify-center">
+        <div className="fixed inset-0 z-60 flex items-center justify-center">
             <div className="absolute inset-0 bg-black opacity-50" onClick={onClose}></div>
             <div className="relative bg-white p-4 max-w-7xl w-full max-h-[140vh] overflow-y-auto rounded-lg shadow-lg" >
                 <div className="max-h-[90vh] overflow-y-auto scrollbar-auto relative p-4">

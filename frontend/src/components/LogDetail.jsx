@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import FormatDate from "./FormatDate";
+import LoadingCircle from "./loadingCircle";
 
 function LogDetail({ id }) {
   const [log, setLog] = useState(null);
@@ -13,7 +14,7 @@ function LogDetail({ id }) {
       .catch((error) => console.error("Error fetching log details:", error));
   }, [id]);
 
-  if (!log) return <div>Loading...</div>;
+  if (!log) return <LoadingCircle />;
 
   // Destructure inspection_items provided by the API
   const {
