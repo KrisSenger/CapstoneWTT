@@ -47,7 +47,7 @@ const NotificationIcon = () => {
 
   const markNotificationAsRead = (notificationId) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    axios.put(`http://${apiURL}/api/notifications/${notificationId}/read/`, {}, {
+    axios.put(`${apiURL}/api/notifications/${notificationId}/read/`, {}, {
       headers: {
         Authorization: `Bearer ${token}`
       }
