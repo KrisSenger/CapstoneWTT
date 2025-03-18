@@ -10,28 +10,26 @@ const Sidebar = ({ isSidebarOpen, children }) => {
                 <div className="h-full px-3 pb-4 overflow-y-auto flex flex-col justify-between">
                     <ul className="space-y-2 font-semibold">
                         <li>
-                            <a href="/" className="block p-4 text-white rounded-lg hover:bg-[#ED5829] transition">Home</a>
+                            <a href="/" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Home</a>
                         </li>
                         <li>
-                            <a href="/manage-users" className="block p-4 text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Manage Users</a>
+                            <a href="/manage-users" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Manage Users</a>
                         </li>
                         <li>
-                            <a href="/manage-equipment" className="block p-4 text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Manage Equipment</a>
+                            <a href="/m" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">🚧Manage Equipment🚧</a>
                         </li>
                         <li>
-                            <a href="/logs" className="block p-4 text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Logs</a>
+                            <a href="/logs" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Logs</a>
                         </li>
                         <li>
-                            <a href="/incidents" className="block p-4 text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Incidents</a>
+                            <a href="/i" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">🚧Incidents🚧</a>
                         </li>
                         <li>
-                            <a href="/Profile" className="block p-4 text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Profile</a>
+                            <a href="/P" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">🚧Profile🚧</a>
                         </li>
                     </ul>
                     <div className="mt-auto">
-                        <li>
-                            <a href="/logout" className="w-full block p-4 text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Logout</a>
-                        </li>
+                        <a href="/logout" className="w-full block p-4 text-white hover:text-gray-600 rounded-lg hover:bg-gray-100 transition dark:text-gray-400 dark:hover:bg-gray-700">Logout</a>
                     </div>
                 </div>
             </aside>
