@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { ACCESS_TOKEN } from '../constants';
 import Popup from './Popup';
@@ -13,6 +13,7 @@ const NotificationIcon = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedLogId, setSelectedLogId] = useState(null);
   const [showLogDetail, setShowLogDetail] = useState(false);
+  const containerRef = useRef(null);
 
   const fetchNotifications = () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -40,6 +41,17 @@ const NotificationIcon = () => {
     const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  // Close notifications dropdown if clicking outside of the container
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [containerRef]);
 
   const handleIconClick = () => {
     setShowNotifications(!showNotifications);
@@ -69,7 +81,7 @@ const NotificationIcon = () => {
     // Close the dropdown immediately
     setShowNotifications(false);
   
-    // Use the log_id from the notification payload
+    // Use the log_id from the notification payload to show details if available
     if (notification.log_id) {
       setSelectedLogId(notification.log_id);
       setShowLogDetail(true);
@@ -82,7 +94,7 @@ const NotificationIcon = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <div onClick={handleIconClick} style={{ cursor: "pointer" }}>
         <svg
           className={`w-6 h-6 ${active ? 'text-red-500' : 'text-gray-500'}`}
