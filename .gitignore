@@ -3,3 +3,5 @@ node_modules/
 venv/
 *.pyc
 *.log
+chrome-win64
+Driver_Notes
