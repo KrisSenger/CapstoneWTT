@@ -9,3 +9,6 @@ sqlparse
 psycopg2-binary
 python-dotenv
 dj-database-url
+boto3
+django-storages
+Pillow

@@ -26,24 +26,31 @@ export default function AddUser() {
     };
     const addUser = async () => {
         try {
-            await api.post('/api/user/add/', formData);
-            setFormData({
-                username: '',
-                password: '',
-                email: '',
-                first_name: '',
-                last_name: '',
-                employeeID: '',
-                address: '',
-                driver_license: '',
-                is_superuser: false,
-                is_staff: true,
-                is_active: true,
-            });
+          await api.post('/api/user/add/', formData);
+          alert("User successfully added!");
+          setFormData({
+            username: '',
+            password: '',
+            email: '',
+            first_name: '',
+            last_name: '',
+            employeeID: '',
+            address: '',
+            driver_license: '',
+            is_superuser: false,
+            is_staff: true,
+            is_active: true,
+          });
+          
         } catch (error) {
-            console.error('Error adding user:', error);
+          // Extract error message from the response and display it in an alert
+          const errorMsg = error.response?.data?.employeeID
+            ? error.response.data.employeeID.join(" ")
+            : "Error adding user.";
+          alert(errorMsg);
+          console.error('Error adding user:', error);
         }
-    };
+      };      
 
 
     return (

@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from .serializers import *
+from django.db import IntegrityError
 from .utils import get_driver_name
 
 def login_view(request):
@@ -38,11 +40,19 @@ def getUser(request, pk):
 @api_view(['POST'])
 def addUser(request):
     serializer = UserSerializer(data=request.data)
-
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+        try:
+            user = serializer.save()
+        except IntegrityError as e:
+            # Customize the error message for duplicate employeeID
+            return Response(
+                {"employeeID": ["A user with that employeeID already exists."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            {"message": "User added successfully!", "user": serializer.data},
+            status=status.HTTP_201_CREATED
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
@@ -178,7 +188,7 @@ def deleteTrailer(request, pk):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def getLogData(request):
-    logs = WTT_Log.objects.all()
+    logs = WTT_Log.objects.select_related('truck', 'trailer', 'employee').all()
     serializer = LogSerializer(logs, many=True)
     return Response(serializer.data)
 
@@ -330,3 +340,36 @@ def getNotifications(request):
     notifications = Notification.objects.filter(read=False).order_by('-created_at')
     serializer = NotificationSerializer(notifications, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def addLogPicture(request):
+    """
+    Endpoint to upload a log picture.
+    Expected payload (multipart/form-data):
+      - logID: the associated log’s ID (or you can embed it in the URL)
+      - picture: the image file to upload.
+    """
+    serializer = LogPicturesSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def addIncidentPicture(request):
+    """
+    Endpoint to upload an incident picture.
+    Expected payload (multipart/form-data):
+      - incidentID: the associated incident's ID.
+      - picture: the image file to upload.
+    """
+    serializer = IncidentPicturesSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

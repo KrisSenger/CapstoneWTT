@@ -13,6 +13,7 @@ const ManageEquipment = () => {
     odometer: '',
     carrier: '',
     jurisdiction: '',
+    in_service: true, // New flag added
   });
   const [editingTruckId, setEditingTruckId] = useState(null);
 
@@ -24,10 +25,12 @@ const ManageEquipment = () => {
     license_plate: '',
     carrier: '',
     jurisdiction: '',
+    in_service: true, // New flag added
   });
   const [editingTrailerId, setEditingTrailerId] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   // Fetch trucks from API
   const fetchTrucks = async () => {
     try {
@@ -53,21 +56,21 @@ const ManageEquipment = () => {
     fetchTrailers();
   }, []);
 
-  // Truck form change handler
+  // Truck form change handler (handles text and checkbox inputs)
   const handleTruckChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setTruckFormData({
       ...truckFormData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
-  // Trailer form change handler
+  // Trailer form change handler (handles text and checkbox inputs)
   const handleTrailerChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setTrailerFormData({
       ...trailerFormData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
@@ -83,6 +86,7 @@ const ManageEquipment = () => {
         odometer: '',
         carrier: '',
         jurisdiction: '',
+        in_service: true,
       });
     } catch (error) {
       console.error('Error adding truck:', error);
@@ -92,8 +96,6 @@ const ManageEquipment = () => {
   const updateTruck = async (id) => {
     try {
       const payload = { ...truckFormData };
-      // uncomment if we want to remove truckID from the payload so user can't change it.
-      //   delete payload.truckID;
       await api.put(`/api/truck/update/${id}/`, payload);
       fetchTrucks();
       setEditingTruckId(null);
@@ -104,6 +106,7 @@ const ManageEquipment = () => {
         odometer: '',
         carrier: '',
         jurisdiction: '',
+        in_service: true,
       });
     } catch (error) {
       console.error('Error updating truck:', error);
@@ -128,6 +131,7 @@ const ManageEquipment = () => {
       odometer: truck.odometer || '',
       carrier: truck.carrier || '',
       jurisdiction: truck.jurisdiction || '',
+      in_service: truck.in_service, // use the current flag value
     });
   };
 
@@ -142,6 +146,7 @@ const ManageEquipment = () => {
         license_plate: '',
         carrier: '',
         jurisdiction: '',
+        in_service: true,
       });
     } catch (error) {
       console.error('Error adding trailer:', error);
@@ -151,8 +156,6 @@ const ManageEquipment = () => {
   const updateTrailer = async (id) => {
     try {
       const payload = { ...trailerFormData };
-      // uncomment if we want to remove truckID from the payload so user can't change it.
-      //   delete payload.trailerID;
       await api.put(`/api/trailer/update/${id}/`, payload);
       fetchTrailers();
       setEditingTrailerId(null);
@@ -162,6 +165,7 @@ const ManageEquipment = () => {
         license_plate: '',
         carrier: '',
         jurisdiction: '',
+        in_service: true,
       });
     } catch (error) {
       console.error('Error updating trailer:', error);
@@ -185,8 +189,10 @@ const ManageEquipment = () => {
       license_plate: trailer.license_plate || '',
       carrier: trailer.carrier || '',
       jurisdiction: trailer.jurisdiction || '',
+      in_service: trailer.in_service, // use the current flag value
     });
   };
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -194,11 +200,10 @@ const ManageEquipment = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
   return (
     <div>
-      <Header darkMode={darkMode}
-        toggleDarkMode={toggleDarkMode}
-        toggleSidebar={toggleSidebar} />
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} toggleSidebar={toggleSidebar} />
       <Sidebar isSidebarOpen={isSidebarOpen}>
         <h1>Equipment Manager</h1>
         {/* Truck Management Section */}
@@ -248,6 +253,15 @@ const ManageEquipment = () => {
               value={truckFormData.jurisdiction}
               onChange={handleTruckChange}
             />
+            <label>
+              <input
+                type="checkbox"
+                name="in_service"
+                checked={truckFormData.in_service}
+                onChange={handleTruckChange}
+              />
+              In Service
+            </label>
             {editingTruckId ? (
               <button onClick={() => updateTruck(editingTruckId)}>Update Truck</button>
             ) : (
@@ -265,6 +279,7 @@ const ManageEquipment = () => {
                   <th>Odometer</th>
                   <th>Carrier</th>
                   <th>Jurisdiction</th>
+                  <th>In Service</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -277,6 +292,9 @@ const ManageEquipment = () => {
                     <td>{truck.odometer}</td>
                     <td>{truck.carrier}</td>
                     <td>{truck.jurisdiction}</td>
+                    <td style={{ color: truck.in_service ? 'green' : 'red' }}>
+                      {truck.in_service ? 'Yes' : 'No'}
+                    </td>
                     <td>
                       <button onClick={() => startEditingTruck(truck)}>Edit</button>
                       <button onClick={() => deleteTruck(truck.truckID)}>Delete</button>
@@ -303,7 +321,7 @@ const ManageEquipment = () => {
             <input
               type="text"
               name="make_model"
-              placeholder="Make &amp; Model"
+              placeholder="Make & Model"
               value={trailerFormData.make_model}
               onChange={handleTrailerChange}
             />
@@ -328,6 +346,15 @@ const ManageEquipment = () => {
               value={trailerFormData.jurisdiction}
               onChange={handleTrailerChange}
             />
+            <label>
+              <input
+                type="checkbox"
+                name="in_service"
+                checked={trailerFormData.in_service}
+                onChange={handleTrailerChange}
+              />
+              In Service
+            </label>
             {editingTrailerId ? (
               <button onClick={() => updateTrailer(editingTrailerId)}>Update Trailer</button>
             ) : (
@@ -344,6 +371,7 @@ const ManageEquipment = () => {
                   <th>License Plate</th>
                   <th>Carrier</th>
                   <th>Jurisdiction</th>
+                  <th>In Service</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -355,6 +383,9 @@ const ManageEquipment = () => {
                     <td>{trailer.license_plate}</td>
                     <td>{trailer.carrier}</td>
                     <td>{trailer.jurisdiction}</td>
+                    <td style={{ color: trailer.in_service ? 'green' : 'red' }}>
+                      {trailer.in_service ? 'Yes' : 'No'}
+                    </td>
                     <td>
                       <button onClick={() => startEditingTrailer(trailer)}>Edit</button>
                       <button onClick={() => deleteTrailer(trailer.trailerID)}>Delete</button>
