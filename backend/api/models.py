@@ -21,7 +21,6 @@ class WTT_UserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 class WTT_User(AbstractBaseUser, PermissionsMixin):
-    
     id = models.AutoField(primary_key=True)
     employeeID = models.CharField(max_length=100, unique=True)
     first_name = models.CharField(max_length=40)
@@ -38,11 +37,16 @@ class WTT_User(AbstractBaseUser, PermissionsMixin):
     objects = WTT_UserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', 'employeeID']
 
     class Meta:
         db_table = 'WTT_User'
 
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def get_short_name(self):
+        return self.first_name
 
 
 class WTT_Truck(models.Model):
@@ -52,9 +56,11 @@ class WTT_Truck(models.Model):
     odometer = models.IntegerField()
     carrier = models.CharField(max_length=30)
     jurisdiction = models.CharField(max_length=25)
+    in_service = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'WTT_Truck'
+
 
 class WTT_Trailer(models.Model):
     trailerID = models.IntegerField(primary_key=True)
@@ -62,15 +68,22 @@ class WTT_Trailer(models.Model):
     license_plate = models.CharField(max_length=8)
     carrier = models.CharField(max_length=30)
     jurisdiction = models.CharField(max_length=25)
+    in_service = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'WTT_Trailer'
 
+
 class WTT_Log(models.Model):
     logID = models.IntegerField(primary_key=True)
-    employeeID = models.IntegerField()
-    truckID = models.IntegerField()
-    trailerID = models.IntegerField(null=True)
+    employee = models.ForeignKey(
+        WTT_User,
+        on_delete=models.CASCADE,
+        db_column='employeeID',
+        to_field='employeeID'  # this tells Django to use the WTT_User.employeeID field for lookups
+    )
+    truck = models.ForeignKey(WTT_Truck, on_delete=models.CASCADE, db_column='truckID')
+    trailer = models.ForeignKey(WTT_Trailer, on_delete=models.CASCADE, null=True, blank=True, db_column='trailerID')
     trip = models.IntegerField()
     location = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
@@ -80,7 +93,6 @@ class WTT_Log(models.Model):
     defects_en_route = models.CharField(max_length=1000, null=True)
     incidents = models.CharField(max_length=1000, null=True)
     remarks = models.CharField(max_length=1000, null=True)
-    pictures = models.CharField(max_length=1000, null=True)
     declaration = models.IntegerField()
     signature = models.CharField(max_length=100)
 
@@ -95,6 +107,7 @@ class WTT_Log_Inspect_Items(models.Model):
     class Meta:
         db_table = 'WTT_Log_Inspect_Items'
 
+
 class WTT_Log_Inspect_Det(models.Model):
     detailID = models.AutoField(primary_key=True, null=False)
     logID = models.ForeignKey('WTT_Log', on_delete=models.CASCADE, db_column='logID')
@@ -102,6 +115,47 @@ class WTT_Log_Inspect_Det(models.Model):
 
     class Meta:
         db_table = 'WTT_Log_Inspect_Det'
+
+
+class WTT_Log_Pictures(models.Model):
+    logpicID = models.AutoField(primary_key=True, null=False)
+    logID = models.ForeignKey(
+        'WTT_Log',
+        on_delete=models.CASCADE,
+        db_column='logID',
+        related_name='pictures'  # use log_instance.pictures.all()
+    )
+    picture = models.ImageField(upload_to='log_images/')
+
+    class Meta:
+        db_table = 'WTT_Log_Pictures'
+
+
+class WTT_Srs_Incident(models.Model):
+    incidentID = models.AutoField(primary_key=True)
+    employee = models.ForeignKey(WTT_User, on_delete=models.CASCADE, db_column='employeeID')
+    truck = models.ForeignKey(WTT_Truck, on_delete=models.CASCADE, db_column='truckID')
+    trailer = models.ForeignKey(WTT_Trailer, on_delete=models.CASCADE, null=True, blank=True, db_column='trailerID')
+    date = models.DateTimeField(default=datetime.now, blank=True)
+    summary = models.CharField(max_length=1000, null=True)
+
+    class Meta:
+        db_table = 'WTT_Srs_Incident'
+
+
+class WTT_Srs_Inc_Pictures(models.Model):
+    srsincpicID = models.AutoField(primary_key=True, null=False)
+    incidentID = models.ForeignKey(
+        'WTT_Srs_Incident',
+        on_delete=models.CASCADE,
+        db_column='incidentID',
+        related_name='pictures'  # Access via incident_instance.pictures.all()
+    )
+    picture = models.ImageField(upload_to='srs_incidents_images/')
+
+    class Meta:
+        db_table = 'WTT_Srs_Inc_Pictures'
+
 
 class Notification(models.Model):
     id = models.AutoField(primary_key=True)

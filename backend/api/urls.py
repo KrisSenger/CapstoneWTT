@@ -39,4 +39,7 @@ urlpatterns = [
     path('notifications/<int:pk>/read/', markNotificationAsRead, name='mark_notification_read'),
 
     path('notifications/', getNotifications, name='get_notifications'),
+
+    path('log/picture/add/', addLogPicture, name='add_log_picture'),
+    path('incident/picture/add/', addIncidentPicture, name='add_incident_picture'),
 ]

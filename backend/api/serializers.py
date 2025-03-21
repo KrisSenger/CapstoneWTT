@@ -1,8 +1,17 @@
 from rest_framework import serializers
 from .models import *
-from .utils import get_driver_name
+from rest_framework.validators import UniqueValidator
+# from .utils import get_driver_name
 
 class UserSerializer(serializers.ModelSerializer):
+    employeeID = serializers.CharField(
+        validators=[
+            UniqueValidator(
+                queryset=WTT_User.objects.all(),
+                message="A user with that employeeID already exists."
+            )
+        ]
+    )
     is_superuser = serializers.BooleanField(required=False)
     is_active = serializers.BooleanField(required=False)
     is_staff = serializers.BooleanField(required=False)
@@ -14,9 +23,12 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'password', 'address', 'driver_license',
             'is_superuser', 'is_active', 'is_staff'
         ]
-        extra_kwargs = {'password': {'write_only': True, 'required': False}}
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': False},
+        }
 
     def create(self, validated_data):
+        # employeeID will be provided here.
         if validated_data.get('is_superuser', False):
             return WTT_User.objects.create_superuser(
                 username=validated_data['username'],
@@ -40,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def update(self, instance, validated_data):
-        # Pop the password if provided; if not provided, we don't update it.
+        validated_data.pop('employeeID', None)
         password = validated_data.pop('password', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -64,31 +76,47 @@ class TrailerSerializer(serializers.ModelSerializer):
         model = WTT_Trailer
         fields = '__all__'
 
+
+class LogPicturesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WTT_Log_Pictures
+        fields = ['logpicID', 'picture']
+
+
 class LogSerializer(serializers.ModelSerializer):
+    # Use SlugRelatedField so that incoming/outgoing values are based on the employeeID field
+    employeeID = serializers.SlugRelatedField(
+        slug_field="employeeID",
+        queryset=WTT_User.objects.all(),
+        source="employee"
+    )
+
+    truckID = serializers.PrimaryKeyRelatedField(
+        queryset=WTT_Truck.objects.all(), source="truck"
+    )
+    trailerID = serializers.PrimaryKeyRelatedField(
+        queryset=WTT_Trailer.objects.all(),
+        source="trailer",
+        required=False,
+        allow_null=True
+    )
     truck_jurisdiction = serializers.SerializerMethodField()
     trailer_jurisdiction = serializers.SerializerMethodField()
     driver_name = serializers.SerializerMethodField()
     inspection_items = serializers.SerializerMethodField()
     any_defects = serializers.SerializerMethodField()
+    pictures = LogPicturesSerializer(many=True, read_only=True)
 
     def get_truck_jurisdiction(self, obj):
-        from .models import WTT_Truck
-        try:
-            truck = WTT_Truck.objects.get(truckID=obj.truckID)
-            return truck.jurisdiction
-        except WTT_Truck.DoesNotExist:
-            return None
+        return obj.truck.jurisdiction if obj.truck else None
 
     def get_trailer_jurisdiction(self, obj):
-        from .models import WTT_Trailer
-        try:
-            trailer = WTT_Trailer.objects.get(trailerID=obj.trailerID)
-            return trailer.jurisdiction
-        except WTT_Trailer.DoesNotExist:
-            return None
+        return obj.trailer.jurisdiction if obj.trailer else None
 
     def get_driver_name(self, obj):
-        return get_driver_name(obj)
+        if obj.employee:
+            return f"{obj.employee.first_name} {obj.employee.last_name}"
+        return None
 
     def get_inspection_items(self, obj):
         from .models import WTT_Log_Inspect_Items, WTT_Log_Inspect_Det
@@ -126,9 +154,21 @@ class LogSerializer(serializers.ModelSerializer):
         )
         return any(item['defective'] for item in all_items)
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        # If you want the output key to be employeeID, you can rename it:
+        rep['employeeID'] = rep.pop('employee')
+        return rep
+
     class Meta:
         model = WTT_Log
-        fields = '__all__'
+        fields = [
+            'logID', 'employeeID', 'truckID', 'trailerID', 'trip', 'location',
+            'city', 'date', 'load', 'height', 'defects_en_route', 'incidents',
+            'remarks', 'declaration', 'signature',
+            'truck_jurisdiction', 'trailer_jurisdiction', 'driver_name',
+            'inspection_items', 'any_defects', 'pictures'
+        ]
 
 
 class LogInspectItemsSerializer(serializers.ModelSerializer):
@@ -141,6 +181,19 @@ class LogInspectDetSerializer(serializers.ModelSerializer):
     class Meta:
         model = WTT_Log_Inspect_Det
         fields = '__all__'
+
+
+class IncidentPicturesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WTT_Srs_Inc_Pictures
+        fields = ['srsincpicID', 'picture']
+
+
+class IncidentSerializer(serializers.ModelSerializer):
+    pictures = IncidentPicturesSerializer(source='pictures', many=True, read_only=True)
+    class Meta:
+        model = WTT_Srs_Incident
+        fields = ['incidentID', 'employee', 'truck', 'trailer', 'date', 'summary', 'pictures']
 
 
 class NotificationSerializer(serializers.ModelSerializer):

@@ -56,9 +56,10 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     'corsheaders',
     'rest_framework',
+    'storages',
 ]
 
-AUTH_USER_MODEL = "api.wtt_user"
+AUTH_USER_MODEL = "api.WTT_User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -156,3 +157,20 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# settings.py
+
+# DigitalOcean Spaces configuration using django-storages and boto3
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = os.getenv('DO_SPACES_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('DO_SPACES_SECRET')
+AWS_STORAGE_BUCKET_NAME = os.getenv('DO_SPACES_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('DO_SPACES_ENDPOINT_URL', 'https://nyc3.digitaloceanspaces.com')
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'media'
+MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/"

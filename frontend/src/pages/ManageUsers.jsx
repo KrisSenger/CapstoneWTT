@@ -22,6 +22,7 @@ const ManageUsers = () => {
     is_staff: false,
     is_active: true,
   });
+  
   const [editingUserId, setEditingUserId] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -65,15 +66,18 @@ const ManageUsers = () => {
       is_active: true,
     });
   };
+
   const updateUser = async (id) => {
     // Create a complete payload
     const payload = { ...formData };
-    // If password is empty, remove it from the payload
+    // If password is empty, remove it from the payload so it isn’t updated
     if (payload.password === "") {
       delete payload.password;
     }
     try {
       await api.put(`/api/user/update/${id}/`, payload);
+      // After a successful update, show a success message.
+      alert("User updated successfully!");
       fetchUsers();
       setEditingUserId(null);
       setEditing(false);
@@ -91,9 +95,14 @@ const ManageUsers = () => {
         is_active: true,
       });
     } catch (error) {
+      // Check if the error response contains a message for the employeeID field
+      const errorMsg = error.response?.data?.employeeID
+        ? error.response.data.employeeID.join(" ")
+        : "Error updating user.";
+      alert(errorMsg);
       console.error('Error updating user:', error);
     }
-  };
+  };  
 
   const deleteUser = async (id) => {
     try {
@@ -103,6 +112,7 @@ const ManageUsers = () => {
       console.error('Error deleting user:', error);
     }
   };
+
   const handleClose = () => {
     setShowPopup(false);
     fetchUsers();
@@ -125,6 +135,7 @@ const ManageUsers = () => {
       is_active: user.is_active ?? true,
     });
   };
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -132,6 +143,7 @@ const ManageUsers = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
   return (
     <div>
       <Header darkMode={darkMode}

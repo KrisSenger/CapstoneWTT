@@ -5,3 +5,4 @@ venv/
 *.log
 chrome-win64
 Driver_Notes
+docker-compose.yml
