@@ -16,13 +16,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-    environment:
-      - DJANGO_SETTINGS_MODULE=settings
-      - DATABASE_URL=postgresql://neondb_owner:npg_b0rMDg6URdSE@ep-young-base-a60zcfd5-pooler.us-west-2.aws.neon.tech/neondb?sslmode=require
-      - DO_SPACES_KEY=DO006QLQQA7UNWBNC8EC
-      - DO_SPACES_SECRET=lR4M45YBulXQNaJf7chlDrnblbT0PXpW0HjLIeKxuGk
-      - DO_SPACES_BUCKET_NAME=wtt-image-storage
-      - DO_SPACES_ENDPOINT_URL=https://wtt-image-storage.sfo3.digitaloceanspaces.com
+    env_file:
+      - ./backend/.env
 
   mobile:
     build:
