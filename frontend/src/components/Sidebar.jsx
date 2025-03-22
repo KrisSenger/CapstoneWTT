@@ -1,5 +1,5 @@
 import React from 'react';
-import { Logout } from '../App'; // Adjust the import path as necessary
+
 
 const Sidebar = ({ isSidebarOpen, children }) => {
 
