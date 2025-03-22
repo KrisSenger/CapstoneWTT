@@ -157,7 +157,9 @@ class LogSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         # If you want the output key to be employeeID, you can rename it:
-        rep['employeeID'] = rep.pop('employee')
+        print("rep is being printed")
+        print(rep)
+        rep['employeeID'] = rep.pop('employee', rep.get('employeeID'))
         return rep
 
     class Meta:
