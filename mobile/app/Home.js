@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { Ionicons } from '@expo/vector-icons';
+import WelcomeMessage from '../components/WelcomeMessage';
+
 
 const HomeScreen = ({ navigation }) => {
   const [selectedVehicle, setSelectedVehicle] = useState('');
@@ -30,8 +32,9 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={30} color="#ed5829" />
       </TouchableOpacity>
-      
-      <Text style={styles.title}>Welcome John Doe</Text>
+
+      <WelcomeMessage />
+
       
       {/* Dropdown Lists */}
       <View style={styles.selectListContainer}>

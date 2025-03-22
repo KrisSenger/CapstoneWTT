@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; //Toggle password icon
+import { Ionicons } from '@expo/vector-icons'; 
 import axios from 'axios';  
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
@@ -10,6 +10,7 @@ const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
+
 
   const handleLogin = async () => {
     try {
