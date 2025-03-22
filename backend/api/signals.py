@@ -5,10 +5,11 @@ from .utils import get_driver_name
 
 def get_driver_name(log):
     try:
-        user = WTT_User.objects.get(employeeID=log.employeeID)
+        user = log.employee
         return f"{user.first_name} {user.last_name}"
-    except WTT_User.DoesNotExist:
-        return f"Employee #{log.employeeID}"
+    except AttributeError:
+
+        return "Unknown Employee"
 
 @receiver(post_save, sender=WTT_Log_Inspect_Det)
 def notify_on_inspection_item_added(sender, instance, created, **kwargs):
