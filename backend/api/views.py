@@ -381,3 +381,30 @@ def addIncidentPicture(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def getIncidentData(request):
+    incidents = WTT_Srs_Incident.objects.all()
+    serializer = IncidentSerializer(incidents, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getIncident(request, pk):
+    try:
+        incident = WTT_Srs_Incident.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response({'Incident not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = IncidentSerializer(incident, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def addIncident(request):
+    serializer = IncidentSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

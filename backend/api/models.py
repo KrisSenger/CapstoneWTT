@@ -23,7 +23,7 @@ class WTT_UserManager(BaseUserManager):
 
 class WTT_User(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
-    employeeID = models.CharField(max_length=100, unique=True)
+    employeeID = models.CharField(max_length=6, unique=True)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     email = models.EmailField(max_length=100, unique=True)
@@ -55,8 +55,8 @@ class WTT_Truck(models.Model):
     make_model = models.CharField(max_length=60)
     license_plate = models.CharField(max_length=8)
     odometer = models.IntegerField()
-    carrier = models.CharField(max_length=30)
-    jurisdiction = models.CharField(max_length=25)
+    carrier = models.CharField(max_length=60)
+    jurisdiction = models.CharField(max_length=60)
     in_service = models.BooleanField(default=True)
 
     class Meta:
@@ -67,8 +67,8 @@ class WTT_Trailer(models.Model):
     trailerID = models.IntegerField(primary_key=True)
     make_model = models.CharField(max_length=60)
     license_plate = models.CharField(max_length=8)
-    carrier = models.CharField(max_length=30)
-    jurisdiction = models.CharField(max_length=25)
+    carrier = models.CharField(max_length=60)
+    jurisdiction = models.CharField(max_length=60)
     in_service = models.BooleanField(default=True)
 
     class Meta:
@@ -134,7 +134,13 @@ class WTT_Log_Pictures(models.Model):
 
 class WTT_Srs_Incident(models.Model):
     incidentID = models.AutoField(primary_key=True)
-    employee = models.ForeignKey(WTT_User, on_delete=models.CASCADE, db_column='employeeID')
+    employee = models.ForeignKey(
+        WTT_User,
+        on_delete=models.CASCADE,
+        db_column='employeeID',
+        to_field='employeeID'
+    )
+
     truck = models.ForeignKey(WTT_Truck, on_delete=models.CASCADE, db_column='truckID')
     trailer = models.ForeignKey(WTT_Trailer, on_delete=models.CASCADE, null=True, blank=True, db_column='trailerID')
     date = models.DateTimeField(default=datetime.now, blank=True)
