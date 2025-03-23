@@ -9,6 +9,9 @@ from .models import *
 from .serializers import *
 from django.db import IntegrityError
 from .utils import get_driver_name
+import logging
+logging.basicConfig(level=logging.INFO)
+
 
 def login_view(request):
     return render(request, 'Login.jsx')
@@ -341,20 +344,25 @@ def getNotifications(request):
     serializer = NotificationSerializer(notifications, many=True)
     return Response(serializer.data)
 
+
+import logging
+logging.basicConfig(level=logging.INFO)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def addLogPicture(request):
-    """
-    Endpoint to upload a log picture.
-    Expected payload (multipart/form-data):
-      - logID: the associated log’s ID (or you can embed it in the URL)
-      - picture: the image file to upload.
-    """
+    logging.info("Request data: %s", request.data)
+    logging.info("Request FILES: %s", request.FILES)
+    
     serializer = LogPicturesSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        instance = serializer.save()
+        logging.info("Uploaded file key: %s", instance.picture.name)
+        logging.info("Uploaded file size: %s", instance.picture.size)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        logging.error("Serializer errors: %s", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

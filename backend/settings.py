@@ -164,7 +164,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # settings.py
 
 # DigitalOcean Spaces configuration using django-storages and boto3
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'api.storages_backends.MediaStorage'
+
 AWS_ACCESS_KEY_ID = os.getenv('DO_SPACES_KEY')
 AWS_SECRET_ACCESS_KEY = os.getenv('DO_SPACES_SECRET')
 AWS_STORAGE_BUCKET_NAME = os.getenv('DO_SPACES_BUCKET_NAME')
@@ -172,5 +173,25 @@ AWS_S3_ENDPOINT_URL = os.getenv('DO_SPACES_ENDPOINT_URL', 'https://nyc3.digitalo
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
-AWS_LOCATION = 'media'
-MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/"
+
+AWS_S3_REGION_NAME = 'sfo3'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_REGION_NAME}.digitaloceanspaces.com"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

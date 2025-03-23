@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from datetime import datetime
+from api.storages_backends import MediaStorage
 
 # Create your models here.
 
@@ -125,7 +126,7 @@ class WTT_Log_Pictures(models.Model):
         db_column='logID',
         related_name='pictures'  # use log_instance.pictures.all()
     )
-    picture = models.ImageField(upload_to='log_images/')
+    picture = models.ImageField(upload_to='log_images/', storage=MediaStorage())
 
     class Meta:
         db_table = 'WTT_Log_Pictures'
@@ -151,7 +152,7 @@ class WTT_Srs_Inc_Pictures(models.Model):
         db_column='incidentID',
         related_name='pictures'  # Access via incident_instance.pictures.all()
     )
-    picture = models.ImageField(upload_to='srs_incidents_images/')
+    picture = models.ImageField(upload_to='srs_incidents_images/', storage=MediaStorage())
 
     class Meta:
         db_table = 'WTT_Srs_Inc_Pictures'
