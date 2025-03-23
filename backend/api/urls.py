@@ -40,6 +40,10 @@ urlpatterns = [
 
     path('notifications/', getNotifications, name='get_notifications'),
 
+    path('incident/data/', getIncidentData, name='get_incident_data'),
+    path('incident/<int:pk>/', getIncident, name='get_incident'),
+    path('incident/add/', addIncident, name='add_incident'),
+
     path('log/picture/add/', addLogPicture, name='add_log_picture'),
     path('incident/picture/add/', addIncidentPicture, name='add_incident_picture'),
 ]

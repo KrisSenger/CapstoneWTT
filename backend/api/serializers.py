@@ -157,7 +157,7 @@ class LogSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        # If you want the output key to be employeeID, you can rename it:
+        
         print("rep is being printed")
         print(rep)
         rep['employeeID'] = rep.pop('employee', rep.get('employeeID'))
@@ -188,16 +188,32 @@ class LogInspectDetSerializer(serializers.ModelSerializer):
 
 class IncidentPicturesSerializer(serializers.ModelSerializer):
     incidentID = serializers.PrimaryKeyRelatedField(queryset=WTT_Srs_Incident.objects.all())
+
     class Meta:
         model = WTT_Srs_Inc_Pictures
         fields = ['srsincpicID', 'picture', 'incidentID']
 
 
 class IncidentSerializer(serializers.ModelSerializer):
-    pictures = IncidentPicturesSerializer(source='pictures', many=True, read_only=True)
+    employeeID = serializers.SlugRelatedField(
+        queryset=WTT_User.objects.all(),
+        slug_field="employeeID",
+        source="employee"
+    )
+    truckID = serializers.PrimaryKeyRelatedField(
+        queryset=WTT_Truck.objects.all(), source="truck"
+    )
+    trailerID = serializers.PrimaryKeyRelatedField(
+        queryset=WTT_Trailer.objects.all(),
+        source="trailer",
+        allow_null=True,
+        required=False
+    )
+    pictures = IncidentPicturesSerializer(many=True, read_only=True)
+
     class Meta:
         model = WTT_Srs_Incident
-        fields = ['incidentID', 'employee', 'truck', 'trailer', 'date', 'summary', 'pictures']
+        fields = ['incidentID', 'employeeID', 'truckID', 'trailerID', 'date', 'summary', 'pictures']
 
 
 class NotificationSerializer(serializers.ModelSerializer):
