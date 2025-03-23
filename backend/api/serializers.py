@@ -78,9 +78,10 @@ class TrailerSerializer(serializers.ModelSerializer):
 
 
 class LogPicturesSerializer(serializers.ModelSerializer):
-    class Meta:
+    logID = serializers.PrimaryKeyRelatedField(queryset=WTT_Log.objects.all())
+    class Meta: 
         model = WTT_Log_Pictures
-        fields = ['logpicID', 'picture']
+        fields = ['logpicID', 'logID', 'picture']
 
 
 class LogSerializer(serializers.ModelSerializer):
@@ -186,9 +187,10 @@ class LogInspectDetSerializer(serializers.ModelSerializer):
 
 
 class IncidentPicturesSerializer(serializers.ModelSerializer):
+    incidentID = serializers.PrimaryKeyRelatedField(queryset=WTT_Srs_Incident.objects.all())
     class Meta:
         model = WTT_Srs_Inc_Pictures
-        fields = ['srsincpicID', 'picture']
+        fields = ['srsincpicID', 'picture', 'incidentID']
 
 
 class IncidentSerializer(serializers.ModelSerializer):
