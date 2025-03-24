@@ -28,19 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        # employeeID will be provided here.
         if validated_data.get('is_superuser', False):
             return WTT_User.objects.create_superuser(
-                username=validated_data['username'],
-                email=validated_data['email'],
-                password=validated_data.get('password'),
-                employeeID=validated_data.get('employeeID'),
-                first_name=validated_data.get('first_name'),
-                last_name=validated_data.get('last_name'),
-                address=validated_data.get('address'),
-                driver_license=validated_data.get('driver_license')
-            )
-        return WTT_User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data.get('password'),
@@ -48,8 +37,22 @@ class UserSerializer(serializers.ModelSerializer):
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
             address=validated_data.get('address'),
-            driver_license=validated_data.get('driver_license')
+            driver_license=validated_data.get('driver_license'),
+            is_staff=validated_data.get('is_staff', False),
+            is_active=validated_data.get('is_active', True)
         )
+        return WTT_User.objects.create_user(
+        username=validated_data['username'],
+        email=validated_data['email'],
+        password=validated_data.get('password'),
+        employeeID=validated_data.get('employeeID'),
+        first_name=validated_data.get('first_name'),
+        last_name=validated_data.get('last_name'),
+        address=validated_data.get('address'),
+        driver_license=validated_data.get('driver_license'),
+        is_staff=validated_data.get('is_staff', False),
+        is_active=validated_data.get('is_active', True)
+    )
 
     def update(self, instance, validated_data):
         validated_data.pop('employeeID', None)
