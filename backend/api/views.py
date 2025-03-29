@@ -165,7 +165,7 @@ def addTrailer(request):
 @api_view(['PUT'])
 def updateTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(trailerid=pk)
+        trailer = WTT_Trailer.objects.get(trailerID=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
