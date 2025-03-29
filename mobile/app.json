@@ -9,29 +9,13 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.adoebadee.WhatTheTruck",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "supportsTablet": true
     },
     "android": {
-      "networkSecurityConfig": {
-        "domainConfig": [
-          {
-            "domain": "209.38.128.48",
-            "cleartextTrafficPermitted": true
-          }
-        ]
-      },
-      "permissions": [
-        "INTERNET"
-      ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logov1.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.adoebadee.WhatTheTruck"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -52,21 +36,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "7011be8d-7436-45b3-bfab-eb51a7c4abd3"
-      }
-    },
-    "owner": "kssait",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/7011be8d-7436-45b3-bfab-eb51a7c4abd3"
     }
   }
 }
