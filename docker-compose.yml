@@ -17,4 +17,21 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      - DJANGO_SETTINGS_MODULE=settings
+      - DJANGO_SETTINGS_MODULE=settings      - DJANGO_SETTINGS_MODULE=settings
+
+  mobile:
+    build:
+      context: ./mobile
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    depends_on:
+      - backend
+    volumes:
+      - ./mobile:/app
+      - /app/node_modules
+    environment:
+      - EXPO_PUBLIC_API_URL=http://209.38.128.48/:8000
