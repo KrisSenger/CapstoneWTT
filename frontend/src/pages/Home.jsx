@@ -26,14 +26,14 @@ function Home() {
           <a href="/manage-users" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
             Manage Users
           </a>
-          <a href="/m" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
-            🚧Manage Equipment🚧
+          <a href="/Manage-Equipment" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+            Manage Equipment
           </a>
           <a href="/logs" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
             Logs
           </a>
-          <a href="/i" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
-            🚧Incidents🚧
+          <a href="/Incidents" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+            Incidents
           </a>
         </div>
       </Sidebar>

@@ -13,19 +13,19 @@ const Sidebar = ({ isSidebarOpen, children }) => {
                             <a href="/" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Home</a>
                         </li>
                         <li>
-                            <a href="/manage-users" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Manage Users</a>
+                            <a href="/Manage-Users" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Manage Users</a>
                         </li>
                         <li>
-                            <a href="/m" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">🚧Manage Equipment🚧</a>
+                            <a href="/Manage-Equipment" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Manage Equipment</a>
                         </li>
                         <li>
-                            <a href="/logs" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Logs</a>
+                            <a href="/Logs" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Logs</a>
                         </li>
                         <li>
-                            <a href="/i" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">🚧Incidents🚧</a>
+                            <a href="/Incidents" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Incidents</a>
                         </li>
                         <li>
-                            <a href="/P" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">🚧Profile🚧</a>
+                            <a href="/Profile" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Profile</a>
                         </li>
                     </ul>
                     <div className="mt-auto">
