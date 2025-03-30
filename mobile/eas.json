@@ -7,13 +7,22 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal"
-    },
+                   },
+            },
     "preview": {
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
-    }
+      "distribution": "internal",
+      "android": {
+        "keystore": {
+          "keystorePath": "C:\\Users\\krist\\Documents\\wttkey.jks",
+          "keystoreAlias": "wttkey",
+          "keystorePassword": "Test1ngSucks",
+          "keyAlias": "wttkey",
+          "keyPassword": "Test1ngSucks"
+        }
+    },
   },
   "submit": {
     "production": {}
