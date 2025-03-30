@@ -24,7 +24,7 @@ const Header = ({ darkMode, toggleDarkMode, toggleSidebar }) => {
             />
               {/* <MdSpaceDashboard className='h-8 me-3 text-xl text-violet-500' /> */}
               <span className='self-center text-xl font-semibold text-white sm:text-2xl whitespace-nowrap dark:text-white ml-60'>
-                Chinook Transport Services
+                Chinook Transport Services Supervisor Dashboard
               </span>
             </a>
           </div>
