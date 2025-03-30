@@ -3,10 +3,11 @@
     "name": "WhatTheTruck",
     "slug": "WhatTheTruck",
     "version": "1.0.0",
+    "owner": "kssait",
     "extra": {
       "eas": {
-        "projectId": "7011be8d-7436-45b3-bfab-eb51a7c4abd3",
-      },
+        "projectId": "7011be8d-7436-45b3-bfab-eb51a7c4abd3"
+      }
     },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,6 +43,7 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "owner": "kssait"
   }
 }
