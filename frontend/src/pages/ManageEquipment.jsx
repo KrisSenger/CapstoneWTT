@@ -272,13 +272,13 @@ const ManageEquipment = () => {
         {!selectedType && (
           <div className="flex justify-center space-x-8 mt-8">
             <button 
-              className="px-8 py-4 bg-orange-500 text-white text-2xl rounded-lg"
+              className="px-8 py-4 bg-orange-500 text-white text-2xl rounded-lg hover:bg-orange-700"
               onClick={() => setSelectedType('truck')}
             >
               Truck Manager
             </button>
             <button 
-              className="px-8 py-4 bg-orange-500 text-white text-2xl rounded-lg"
+              className="px-8 py-4 bg-orange-500 text-white text-2xl rounded-lg hover:bg-orange-700"
               onClick={() => setSelectedType('trailer')}
             >
               Trailer Manager
@@ -292,7 +292,7 @@ const ManageEquipment = () => {
             {/* Header row with Back button, title, and Add button */}
             <div className="flex items-center justify-between mb-4">
               <button 
-                className="px-4 py-2 ml-4 mt-3 bg-orange-500 text-white rounded-md"
+                className="px-4 py-2 ml-4 mt-3 bg-orange-500 text-white rounded-md hover:bg-orange-700 transition duration-200"
                 onClick={() => setSelectedType(null)}
               >
                 Back
@@ -302,14 +302,14 @@ const ManageEquipment = () => {
               </h3>
               {selectedType === 'truck' ? (
                 <button 
-                  className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md"
+                  className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-200"
                   onClick={() => setShowTruckAddPopup(true)}
                 >
                   Add Truck
                 </button>
               ) : (
                 <button 
-                  className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md"
+                  className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-200"
                   onClick={() => setShowTrailerAddPopup(true)}
                 >
                   Add Trailer

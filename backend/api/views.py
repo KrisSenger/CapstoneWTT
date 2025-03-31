@@ -128,6 +128,9 @@ def deleteUser(request, pk):
     except ObjectDoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
+    if user.is_superuser:
+        return Response({"error": "Cannot delete Superuser Admin"}, status=status.HTTP_403_FORBIDDEN)
+    
     user.delete()
     return Response({'message': 'User successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
 

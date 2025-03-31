@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import Popup from '../components/Popup';
 import AddUser from '../components/AddUser';
+import { useNavigate } from 'react-router-dom';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -25,6 +26,7 @@ const ManageUsers = () => {
   const [editingUserId, setEditingUserId] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
@@ -165,8 +167,26 @@ const ManageUsers = () => {
     <div>
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} toggleSidebar={toggleSidebar} />
       <Sidebar isSidebarOpen={isSidebarOpen}>
-        <h2 className="text-xl font-semibold text-gray-800 text-center py-4">User Manager</h2>
-        <div>
+      <div className="flex items-center justify-between mb-4">
+        <button 
+          className="px-4 py-2 ml-4 mt-3 bg-orange-500 text-white rounded-md hover:bg-orange-700 transition duration-200" 
+          onClick={() => navigate("/")}
+        > 
+          Home 
+        </button>
+        <h3 
+          className="text-2xl font-semibold"
+        >
+          User Management
+        </h3>
+        {/* Button to add a new user */}
+        <button
+          className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-200"
+          onClick={() => setShowAddPopup(true)}
+        >
+            Add User
+        </button>
+        
           {/* Popup for editing a user */}
           {editing && (
             <Popup onClose={cancelEdit}>
@@ -288,13 +308,6 @@ const ManageUsers = () => {
               </div>
             </Popup>
           )}
-          {/* Button to add a new user */}
-          <button
-            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
-            onClick={() => setShowAddPopup(true)}
-          >
-            Add User
-          </button>
           {showAddPopup && (
             <Popup onClose={handleCloseAddPopup}>
               <AddUser />
