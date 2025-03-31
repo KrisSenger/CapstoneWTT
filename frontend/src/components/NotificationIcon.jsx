@@ -97,7 +97,7 @@ const NotificationIcon = () => {
     <div className="relative" ref={containerRef}>
       <div onClick={handleIconClick} style={{ cursor: "pointer" }}>
         <svg
-          className={`w-6 h-6 ${active ? 'text-red-500' : 'text-gray-500'}`}
+          className={`w-6 h-6 ${active ? 'text-orange-500' : 'text-gray-500'}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -110,7 +110,7 @@ const NotificationIcon = () => {
           />
         </svg>
         {notificationCount > 0 && (
-          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
             {notificationCount}
           </span>
         )}
