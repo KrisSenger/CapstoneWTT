@@ -5,12 +5,22 @@ from rest_framework.validators import UniqueValidator
 
 class UserSerializer(serializers.ModelSerializer):
     employeeID = serializers.CharField(
-        validators=[
-            UniqueValidator(
-                queryset=WTT_User.objects.all(),
-                message="A user with that employeeID already exists."
-            )
-        ]
+        validators=[UniqueValidator(
+            queryset=WTT_User.objects.all(),
+            message="A user with that employeeID already exists."
+        )]
+    )
+    email = serializers.EmailField(
+        validators=[UniqueValidator(
+            queryset=WTT_User.objects.all(),
+            message="A user with that email already exists."
+        )]
+    )
+    username = serializers.CharField(
+        validators=[UniqueValidator(
+            queryset=WTT_User.objects.all(),
+            message="A user with that username already exists."
+        )]
     )
     is_superuser = serializers.BooleanField(required=False)
     is_active = serializers.BooleanField(required=False)
