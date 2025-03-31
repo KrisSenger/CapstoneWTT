@@ -51,6 +51,9 @@ const ManageEquipment = () => {
   };
 
   const addTruck = async () => {
+    if (!window.confirm("Are you sure you want to add this truck?")) {
+      return;
+    }
     try {
       await api.post('/api/truck/add/', truckFormData);
       alert("Truck added successfully!");
@@ -66,11 +69,24 @@ const ManageEquipment = () => {
         in_service: true,
       });
     } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        typeof error.response.data === 'string' &&
+        error.response.data.includes("already exists")
+      ) {
+        alert("Truck ID already exists");
+      } else {
+        alert("Error adding truck. Please check the form and try again.");
+      }
       console.error('Error adding truck:', error);
     }
-  };
+  };  
 
   const updateTruck = async (id) => {
+    if (!window.confirm("Are you sure you want to edit this truck?")) {
+      return;
+    }
     try {
       await api.put(`/api/truck/update/${id}/`, truckFormData);
       alert("Truck updated successfully!");
@@ -93,6 +109,9 @@ const ManageEquipment = () => {
 
   // Deactivate truck by setting in_service to false.
   const deactivateTruck = async (truck) => {
+    if (!window.confirm("Are you sure you want to deactivate this truck?")) {
+      return;
+    }
     try {
       const payload = {
         truckID: Number(truck.truckID),
@@ -113,6 +132,9 @@ const ManageEquipment = () => {
 
   // Activate truck by setting in_service to true.
   const activateTruck = async (truck) => {
+    if (!window.confirm("Are you sure you want to activate this truck?")) {
+      return;
+    }
     try {
       const payload = {
         truckID: Number(truck.truckID),
@@ -156,6 +178,9 @@ const ManageEquipment = () => {
   };
 
   const addTrailer = async () => {
+    if (!window.confirm("Are you sure you want to add this trailer?")) {
+      return;
+    }
     try {
       await api.post('/api/trailer/add/', trailerFormData);
       alert("Trailer added successfully!");
@@ -170,11 +195,24 @@ const ManageEquipment = () => {
         in_service: true,
       });
     } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        typeof error.response.data === 'string' &&
+        error.response.data.includes("already exists")
+      ) {
+        alert("Trailer ID already exists");
+      } else {
+        alert("Error adding trailer. Please check the form and try again.");
+      }
       console.error('Error adding trailer:', error);
     }
-  };
+  };  
 
   const updateTrailer = async (id) => {
+    if (!window.confirm("Are you sure you want to update this trailer?")) {
+      return;
+    }
     try {
       await api.put(`/api/trailer/update/${id}/`, trailerFormData);
       alert("Trailer updated successfully!");
@@ -196,6 +234,9 @@ const ManageEquipment = () => {
 
   // Deactivate trailer by setting in_service to false.
   const deactivateTrailer = async (trailer) => {
+    if (!window.confirm("Are you sure you want to deactivate this trailer?")) {
+      return;
+    }
     try {
       const payload = {
         trailerID: Number(trailer.trailerID),
@@ -216,6 +257,9 @@ const ManageEquipment = () => {
 
   // Activate trailer by setting in_service to true.
   const activateTrailer = async (trailer) => {
+    if (!window.confirm("Are you sure you want to activate this trailer?")) {
+      return;
+    }
     try {
       const payload = {
         trailerID: Number(trailer.trailerID),
