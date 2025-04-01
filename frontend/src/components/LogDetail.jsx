@@ -204,11 +204,27 @@ function LogDetail({ id }) {
         <h2 className="text-xl font-semibold mb-2">Remarks</h2>
         <p className="border p-2 min-h-[80px]">{log.remarks}</p>
       </div>
-      <p>
-        <strong>Pictures:</strong> {log.pictures}
-      </p>
+
+      {/* Pictures Section */}
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-2">Pictures</h2>
+        {log.pictures && log.pictures.length > 0 ? (
+          <div className="flex flex-wrap gap-4">
+            {log.pictures.map((pic) => (
+              <img
+                key={pic.logpicID}
+                src={pic.picture}
+                alt={`Log Picture ${pic.logpicID}`}
+                className="max-w-xs rounded shadow"
+              />
+            ))}
+          </div>
+        ) : (
+          <p>No pictures available.</p>
+        )}
+      </div>
     </div>
   );
 }
 
-export default LogDetail;
+export default LogDetail

@@ -1,19 +1,64 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework import status
+from rest_framework import status, serializers
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from .serializers import *
+from django.db import IntegrityError
 from .utils import get_driver_name
+from functools import wraps
+
 
 def login_view(request):
     return render(request, 'Login.jsx')
 
+
+def supervisor_required(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or not (request.user.is_active and request.user.is_staff):
+            return Response(
+                {"error": "Not authorized. Only active supervisors can perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return func(request, *args, **kwargs)
+    return wrapper
+
+
+# Serializer and view for supervisor dashboard login
+class DashboardTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if not self.user.is_active or not self.user.is_staff:
+            raise serializers.ValidationError("Not authorized. Only active supervisors can log in.")
+        return data
+
+
+class DashboardTokenObtainPairView(TokenObtainPairView):
+    serializer_class = DashboardTokenObtainPairSerializer
+
+
+# Serializer and view for driver login
+class DriverTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if not self.user.is_active:
+            raise serializers.ValidationError("User is not active.")
+        return data
+
+
+class DriverTokenObtainPairView(TokenObtainPairView):
+    serializer_class = DriverTokenObtainPairSerializer
+
+
 # User Views
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def getUserData(request):
     users = WTT_User.objects.all()
     serializer = UserSerializer(users, many=True)
@@ -25,7 +70,7 @@ def getCurUserData(request):
     serializer = UserSerializer(curuser)
     return Response(serializer.data)
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def getUser(request, pk):
     try:
         user = WTT_User.objects.get(id=pk)
@@ -35,36 +80,70 @@ def getUser(request, pk):
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def addUser(request):
     serializer = UserSerializer(data=request.data)
-
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+        try:
+            user = serializer.save()
+        except IntegrityError as e:
+            # Customize the error message for duplicate employeeID
+            return Response(
+                {"employeeID": ["A user with that employeeID already exists."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            {"message": "User added successfully!", "user": serializer.data},
+            status=status.HTTP_201_CREATED
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def updateUser(request, pk):
     try:
         user = WTT_User.objects.get(id=pk)
     except ObjectDoesNotExist:
-        return Response({'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.user.is_staff and not request.user.is_superuser:
+        if 'is_superuser' in request.data:
+            if request.data['is_superuser'] != user.is_superuser:
+                return Response(
+                    {"error": "Changing Superuser status prohibited."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+    
+    if request.user.id == user.id:
+        if 'is_active' in request.data and request.data['is_active'] is False:
+            return Response(
+                {"error": "You cannot deactivate yourself."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     serializer = UserSerializer(instance=user, data=request.data)
-
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def deleteUser(request, pk):
     try:
         user = WTT_User.objects.get(id=pk)
     except ObjectDoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if user.is_superuser:
+        return Response({"error": "Cannot delete Superuser Admin"}, status=status.HTTP_403_FORBIDDEN)
     
     user.delete()
     return Response({'message': 'User successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
@@ -72,12 +151,15 @@ def deleteUser(request, pk):
 
 # Truck Views
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getTruckData(request):
     truck = WTT_Truck.objects.all()
     serializer = TruckSerializer(truck, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getTruck(request, pk):
     try:
         truck = WTT_Truck.objects.get(truckID=pk)
@@ -87,7 +169,10 @@ def getTruck(request, pk):
     serializer = TruckSerializer(truck, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def addTruck(request):
     serializer = TruckSerializer(data=request.data)
 
@@ -97,7 +182,9 @@ def addTruck(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def updateTruck(request, pk):
     try:
         truck = WTT_Truck.objects.get(truckID=pk)
@@ -111,7 +198,10 @@ def updateTruck(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def deleteTruck(request, pk):
     try:
         truck = WTT_Truck.objects.get(truckID=pk)
@@ -124,12 +214,15 @@ def deleteTruck(request, pk):
 
 # Trailer Views
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getTrailerData(request):
     trailers = WTT_Trailer.objects.all()
     serializer = TrailerSerializer(trailers, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getTrailer(request, pk):
     try:
         trailer = WTT_Trailer.objects.get(pk=pk)
@@ -139,7 +232,10 @@ def getTrailer(request, pk):
     serializer = TrailerSerializer(trailer, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def addTrailer(request):
     serializer = TrailerSerializer(data=request.data)
 
@@ -149,10 +245,13 @@ def addTrailer(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def updateTrailer(request, pk):
     try:
-        trailer = WTT_Trailer.objects.get(trailerid=pk)
+        trailer = WTT_Trailer.objects.get(trailerID=pk)
     except ObjectDoesNotExist:
         return Response({'Trailer not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -163,7 +262,10 @@ def updateTrailer(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def deleteTrailer(request, pk):
     try:
         trailer = WTT_Trailer.objects.get(pk=pk)
@@ -176,13 +278,16 @@ def deleteTrailer(request, pk):
 
 # Log Views
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 @permission_classes([AllowAny])
 def getLogData(request):
-    logs = WTT_Log.objects.all()
+    logs = WTT_Log.objects.select_related('truck', 'trailer', 'employee').all()
     serializer = LogSerializer(logs, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getLog(request, pk):
     try:
         log = WTT_Log.objects.get(pk=pk)
@@ -206,7 +311,9 @@ def getLog(request, pk):
 
     return Response(log_data)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def addLog(request):
     serializer = LogSerializer(data=request.data)
     if serializer.is_valid():
@@ -223,7 +330,9 @@ def addLog(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def updateLog(request, pk):
     try:
         log = WTT_Log.objects.get(pk=pk)
@@ -237,7 +346,10 @@ def updateLog(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def deleteLog(request, pk):
     try:
         log = WTT_Log.objects.get(pk=pk)
@@ -248,14 +360,16 @@ def deleteLog(request, pk):
     return Response({'message': 'Log successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
 
 
-# Log Inspect Items Views
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getItemData(request):
     items = WTT_Log_Inspect_Items.objects.all()
     serializer = LogInspectItemsSerializer(items, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getItem(request, pk):
     try:
         item = WTT_Log_Inspect_Items.objects.get(pk=pk)
@@ -265,7 +379,10 @@ def getItem(request, pk):
     serializer = LogInspectItemsSerializer(item, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def addItem(request):
     serializer = LogInspectItemsSerializer(data=request.data)
 
@@ -275,7 +392,10 @@ def addItem(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def updateItem(request, pk):
     try:
         item = WTT_Log_Inspect_Items.objects.get(pk=pk)
@@ -289,7 +409,10 @@ def updateItem(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@supervisor_required
 def deleteItem(request, pk):
     try:
         item = WTT_Log_Inspect_Items.objects.get(pk=pk)
@@ -299,13 +422,16 @@ def deleteItem(request, pk):
     item.delete()
     return Response({'message': 'Item successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def addInspectionDetail(request):
     serializer = LogInspectDetSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -323,6 +449,7 @@ def markNotificationAsRead(request, pk):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@supervisor_required
 def getNotifications(request):
     if not request.user.is_staff:
         return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
@@ -330,3 +457,64 @@ def getNotifications(request):
     notifications = Notification.objects.filter(read=False).order_by('-created_at')
     serializer = NotificationSerializer(notifications, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def addLogPicture(request):
+    
+    serializer = LogPicturesSerializer(data=request.data)
+    if serializer.is_valid():
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def addIncidentPicture(request):
+    """
+    Endpoint to upload an incident picture.
+    Expected payload (multipart/form-data):
+      - incidentID: the associated incident's ID.
+      - picture: the image file to upload.
+    """
+    serializer = IncidentPicturesSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getIncidentData(request):
+    incidents = WTT_Srs_Incident.objects.all()
+    serializer = IncidentSerializer(incidents, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getIncident(request, pk):
+    try:
+        incident = WTT_Srs_Incident.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response({'Incident not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = IncidentSerializer(incident, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def addIncident(request):
+    serializer = IncidentSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

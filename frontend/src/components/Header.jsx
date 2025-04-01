@@ -1,9 +1,10 @@
 import React from 'react';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { HiOutlineMenuAlt2 } from 'react-icons/hi';
-import { MdSpaceDashboard } from 'react-icons/md';
+// import { MdSpaceDashboard } from 'react-icons/md';
 import NotificationIcon from './NotificationIcon';
 import Sidebar from './Sidebar';
+import toplogo from "../assets/images/top.png";
 const Header = ({ darkMode, toggleDarkMode, toggleSidebar }) => {
   return (
     <nav className='fixed top-0 z-50 w-full bg-[#21016A] border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700'>
@@ -16,9 +17,14 @@ const Header = ({ darkMode, toggleDarkMode, toggleSidebar }) => {
             </button>
 
             <a href='/' className='flex ms-2 md:me-24'>
-              <MdSpaceDashboard className='h-8 me-3 text-xl text-violet-500' />
-              <span className='self-center text-xl font-semibold text-white sm:text-2xl whitespace-nowrap dark:text-white'>
-                Chinook Transport Services
+            <img
+                className="absolute top-0 left-12"
+                src={toplogo}
+                alt="CTSLogo"
+            />
+              {/* <MdSpaceDashboard className='h-8 me-3 text-xl text-violet-500' /> */}
+              <span className='self-center text-xl font-semibold text-white sm:text-2xl whitespace-nowrap dark:text-white ml-60'>
+                Chinook Transport Services Supervisor Dashboard
               </span>
             </a>
           </div>

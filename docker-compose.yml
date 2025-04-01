@@ -16,8 +16,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-    environment:
-      - DJANGO_SETTINGS_MODULE=settings
+    env_file:
+      - ./backend/.env
 
   mobile:
     build:
