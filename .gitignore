@@ -3,3 +3,10 @@ node_modules/
 venv/
 *.pyc
 *.log
+chrome-win64
+Driver_Notes
+docker-compose.yml
+frontend/src/pages/BuggyLogs.jsx
+upload_test.py
+list_files.py
+test.png

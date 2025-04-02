@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import FormatDate from "./FormatDate";
+import LoadingCircle from "./LoadingCircle";
 
 function LogDetail({ id }) {
   const [log, setLog] = useState(null);
@@ -13,7 +14,7 @@ function LogDetail({ id }) {
       .catch((error) => console.error("Error fetching log details:", error));
   }, [id]);
 
-  if (!log) return <div>Loading...</div>;
+  if (!log) return <LoadingCircle />;
 
   // Destructure inspection_items provided by the API
   const {
@@ -203,11 +204,27 @@ function LogDetail({ id }) {
         <h2 className="text-xl font-semibold mb-2">Remarks</h2>
         <p className="border p-2 min-h-[80px]">{log.remarks}</p>
       </div>
-      <p>
-        <strong>Pictures:</strong> {log.pictures}
-      </p>
+
+      {/* Pictures Section */}
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-2">Pictures</h2>
+        {log.pictures && log.pictures.length > 0 ? (
+          <div className="flex flex-wrap gap-4">
+            {log.pictures.map((pic) => (
+              <img
+                key={pic.logpicID}
+                src={pic.picture}
+                alt={`Log Picture ${pic.logpicID}`}
+                className="max-w-xs rounded shadow"
+              />
+            ))}
+          </div>
+        ) : (
+          <p>No pictures available.</p>
+        )}
+      </div>
     </div>
   );
 }
 
-export default LogDetail;
+export default LogDetail

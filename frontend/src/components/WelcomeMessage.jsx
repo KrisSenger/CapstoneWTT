@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect} from 'react';
 import api from '../api';
 
 
@@ -18,7 +18,10 @@ const WelcomeMessage = () => {
     // Display a welcome message with the logged-in user's name
     return (
         <div>
-            <h1>Welcome,  {user ? user.first_name : 'Guest'}!</h1>
+            <span style={{ fontFamily: 'Lato, Helvetica, sans-serif' }} className="text-2xl font-semibold ml-12 mt-4">
+                Welcome, {user ? user.first_name : 'Guest'}!
+            </span>
+
         </div>
     );
 };
