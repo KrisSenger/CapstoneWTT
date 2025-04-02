@@ -9,6 +9,7 @@
       "distribution": "internal"
     },
     "preview": {
+      "developmentClient": true,
       "distribution": "internal"
     },
     "production": {
@@ -17,6 +18,14 @@
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }
+    },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "environment": "development"
     }
   },
   "submit": {

@@ -8,6 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.adoebadee.WhatTheTruck",
@@ -20,7 +21,19 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.adoebadee.WhatTheTruck"
+      "package": "com.adoebadee.WhatTheTruck",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      "networkSecurityConfig": {
+        "domainConfig": [
+          {
+            "domain": "209.38.128.48",
+            "allowCleartextTraffic": true
+          }
+        ]
+      }
     },
     "web": {
       "bundler": "metro",
@@ -29,6 +42,15 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.25",
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       [
         "expo-splash-screen",
         {
