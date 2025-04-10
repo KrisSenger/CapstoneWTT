@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";  
 import api from "../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
@@ -10,11 +10,11 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    const navigation = useNavigation(); // React Native Navigation
+    const navigation = useNavigation(); 
     const resStatus = null;
     const handleSubmit = async () => {
         try {
-            const res = await api.post(`/api/token/`, {
+            const res = await api.post(`/api/driver/token/`, {
                 username: userName,
                 password: password,
             });
