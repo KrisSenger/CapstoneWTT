@@ -1,9 +1,9 @@
-import React from "react";
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api';
 
 
 export default function AddUser() {
+    const [currentUser, setCurrentUser] = useState(null);
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -17,6 +17,7 @@ export default function AddUser() {
         is_staff: false,
         is_active: true,
     });
+    
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData({
@@ -24,7 +25,11 @@ export default function AddUser() {
             [name]: type === 'checkbox' ? checked : value,
         });
     };
+    
     const addUser = async () => {
+        if (!window.confirm("Are you sure you want to add this user?")) {
+          return;
+        }
         try {
           await api.post('/api/user/add/', formData);
           alert("User successfully added!");
@@ -41,17 +46,38 @@ export default function AddUser() {
             is_staff: true,
             is_active: true,
           });
-          
         } catch (error) {
-          // Extract error message from the response and display it in an alert
-          const errorMsg = error.response?.data?.employeeID
-            ? error.response.data.employeeID.join(" ")
-            : "Error adding user.";
+          const errorData = error.response?.data;
+          let errorMsg = "Error adding user.";
+          if (errorData) {
+            if (errorData.employeeID) {
+              errorMsg = errorData.employeeID.join(" ");
+            } else if (errorData.email) {
+              errorMsg = errorData.email.join(" ");
+            } else if (errorData.username) {
+              errorMsg = errorData.username.join(" ");
+            } else if (errorData.detail) {
+              errorMsg = errorData.detail;
+            }
+          }
           alert(errorMsg);
           console.error('Error adding user:', error);
         }
       };      
 
+      const getUser = async () => {
+        api.get(`/api/user/data/me/`)
+          .then((res) => res.data)
+          .then((data) => {
+            setCurrentUser(data);
+            console.log(data);
+          })
+          .catch((error) => console.error(error));
+      };
+      
+    useEffect(() => {
+        getUser();
+    }, []); 
 
     return (
         <div className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6 space-y-4">
@@ -126,6 +152,8 @@ export default function AddUser() {
 
             {/* Checkbox Fields */}
             <div className="grid grid-cols-1 gap-3">
+                {currentUser?.is_superuser && (
+              
                 <label className="flex items-center space-x-2">
                     <input
                         type="checkbox"
@@ -136,6 +164,7 @@ export default function AddUser() {
                     />
                     <span className="text-gray-700">Super Admin</span>
                 </label>
+                )}
 
                 <label className="flex items-center space-x-2">
                     <input

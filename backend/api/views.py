@@ -109,10 +109,24 @@ def updateUser(request, pk):
     try:
         user = WTT_User.objects.get(id=pk)
     except ObjectDoesNotExist:
-        return Response({'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.user.is_staff and not request.user.is_superuser:
+        if 'is_superuser' in request.data:
+            if request.data['is_superuser'] != user.is_superuser:
+                return Response(
+                    {"error": "Changing Superuser status prohibited."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+    
+    if request.user.id == user.id:
+        if 'is_active' in request.data and request.data['is_active'] is False:
+            return Response(
+                {"error": "You cannot deactivate yourself."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     serializer = UserSerializer(instance=user, data=request.data)
-
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -449,9 +463,9 @@ def getNotifications(request):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def addLogPicture(request):
-    
     serializer = LogPicturesSerializer(data=request.data)
     if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
