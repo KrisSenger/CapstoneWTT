@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '10.187.222.125']
 
 REST_FRAMEWORK = {  
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -152,9 +152,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
-    "http://209.38.128.48"
+    "http://209.38.128.48",
+    "http://192.168.1.89",
 ]
-
+CORS_ORIGIN_WHITELIST = [
+    'http://192.168.1.89:8081',
+]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
 

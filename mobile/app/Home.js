@@ -1,30 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list';
 import { Ionicons } from '@expo/vector-icons';
 import WelcomeMessage from '../components/WelcomeMessage';
+import TruckPicker from '../components/TruckPicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PICKED_TRUCK } from '../constants';
+import api from '../api';
+import TrailerPicker from '../components/TrailerPicker';
 
 
 const HomeScreen = ({ navigation }) => {
-  const [selectedVehicle, setSelectedVehicle] = useState('');
-  const [selectedTrailer, setSelectedTrailer] = useState('');
-
-  const vehicleData = [
-    { key: '1', value: 'Vehicle 1' },
-    { key: '2', value: 'Vehicle 2' },
-    // Add more vehicles as needed
-  ];
-
-  const trailerData = [
-    { key: '1', value: 'Trailer 1' },
-    { key: '2', value: 'Trailer 2' },
-    // Add more trailers as needed
-  ];
-
   const handleLogout = () => {
     // Handle logout logic here
+    clearAll();
+    
     navigation.navigate('Login');
   };
+  const clearAll = async () => { 
+    try {
+      await AsyncStorage.clear();
+    } catch (e) {
+      console.error('Error clearing AsyncStorage:', e);
+    }
+  }
+
+  useEffect(() => {
+    readData();
+  }, [])
+
+
+
+  const readData = async () => {
+    try {
+      const value = await AsyncStorage.getItem(PICKED_TRUCK)
+      console.log(value)
+    } catch(e) {
+      // read error
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -38,22 +51,8 @@ const HomeScreen = ({ navigation }) => {
       
       {/* Dropdown Lists */}
       <View style={styles.selectListContainer}>
-        <View style={styles.selectListWrapper}>
-          <SelectList 
-            setSelected={(val) => setSelectedVehicle(val)} 
-            data={vehicleData} 
-            save="value"
-            placeholder='Select a Vehicle'
-          />
-        </View>
-        <View style={styles.selectListWrapper}>
-          <SelectList 
-            setSelected={(val) => setSelectedTrailer(val)} 
-            data={trailerData} 
-            save="value"
-            placeholder='Select a Trailer'
-          />
-        </View>
+        <TruckPicker />
+        <TrailerPicker />
       </View>
       <View style={styles.buttonContainer}>
         <Button
