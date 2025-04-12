@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import WelcomeMessage from '../components/WelcomeMessage';
 import TruckPicker from '../components/TruckPicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PICKED_TRUCK } from '../constants';
+import { PICKED_TRUCK} from '../constants';
 import api from '../api';
 import TrailerPicker from '../components/TrailerPicker';
 
@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate('Login');
   };
   const clearAll = async () => { 
-    try {
+    try {w
       await AsyncStorage.clear();
     } catch (e) {
       console.error('Error clearing AsyncStorage:', e);
