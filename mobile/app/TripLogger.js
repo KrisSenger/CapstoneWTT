@@ -78,20 +78,19 @@ const InspectionForm = ({ navigation }) => {
   const [carrierAddress, setCarrierAddress] = useState('2612 58 Ave SE, Calgary, AB T2C 1G5');
   const [userCity, setUserCity] = useState('');
   const [userLocation, setUserLocation] = useState('');
-  const [make, setMake] = useState('');
   const [odometer, setOdometer] = useState(0);
-  const [truckPlate, setTruckPlate] = useState('');
-  const [trailerPlate, setTrailerPlate] = useState('');
+  const [trailerPlate, setTrailerPlate] = useState();
   const [answers, setAnswers] = useState([]);
   const [showBoxes, setShowBoxes] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [remarks, setRemarks] = useState('');
+  const [remarks, setRemarks] = useState();
   const [loadWeight, setLoadWeight] = useState(0);
   const [loadHeight, setLoadHeight] = useState(0);
-  const [defects, setDefects] = useState('');
-  const [incidents, setIncidents] = useState('No');
+  const [defects, setDefects] = useState();
+  const [incidents, setIncidents] = useState();
   const [trips, setTrips] = useState(0);
-  const [declaration, setDeclaration] = useState(0);
+  const [declaration, setDeclaration] = useState(1);
+  const [logIDNumber, setLogIDNumber] = useState(0);
 
   const toggleAnswer = (id) => {
     setAnswers((prev) =>
@@ -118,12 +117,13 @@ const InspectionForm = ({ navigation }) => {
           (item) => item.trailerID === Number(storedTrailer)
         );
         if (selectedTrailer) {
-          setTrailer(selectedTrailer);
+          setTrailer(selectedTrailer.trailerID);
           setTrailerDisplay(selectedTrailer.trailerID);
           setTrailerPlate(selectedTrailer.license_plate);
         }else if(storedTrailer === "Other" || storedTrailer === "No Trailer"){
-          setTrailerDisplay("Other");
-          setTrailerPlate("Other");
+          setTrailerDisplay(storedTrailer);
+          setTrailerPlate(storedTrailer);
+          setTrailer(null);
         }
         const selectedTruck = truckData.find(
           (item) => item.truckID === Number(storedTruck)
@@ -132,8 +132,6 @@ const InspectionForm = ({ navigation }) => {
           setTruck(selectedTruck);
           setTruckDisplay(selectedTruck.truckID);
           setOdometer(selectedTruck.odometer);
-          setMake(selectedTruck.make_model);
-          setTruckPlate(selectedTruck.license_plate);
         }
   
       } catch (error) {
@@ -147,7 +145,7 @@ const InspectionForm = ({ navigation }) => {
   const pushLog = async () => {
     try {
       const response = await api.post('/api/log/add/', {
-        logID: 1007,
+        logID: 1015,
         trip: trips,
         location: userLocation,
         city: userCity,
@@ -160,15 +158,23 @@ const InspectionForm = ({ navigation }) => {
         declaration: declaration,
         signature: user.first_name,
         employeeID: user.employeeID,
-        trailerID: trailer.trailerID,
+        trailerID: trailer,
         truckID: truck.truckID,
       });
+      console.log('Log created successfully:', response.data.logID);
+      setLogIDNumber(response.data.logID);
+      //Switch disply to allow the user to fill out the check boxes
+      if(declaration === 0){
+        setShowBoxes(true);
+      }else{
+        navigation.navigate('Home');
+      }
       console.log('Log created successfully:', response.data);
-      navigation.navigate('Home');
+
     } catch (error) {
       console.error('Error creating log:', error);
       console.log({
-        logID: 1007,
+        logID: 1010,
         trip: trips,
         location: userLocation,
         city: userCity,
@@ -181,7 +187,7 @@ const InspectionForm = ({ navigation }) => {
         declaration: declaration,
         signature: user.first_name,
         employeeID: user.employeeID,
-        trailerID: trailer.trailerID,
+        trailerID: trailer,
         truckID: truck.truckID,
       });
     }
@@ -190,7 +196,7 @@ const InspectionForm = ({ navigation }) => {
     try {
       for (const detailId of answers) {
         const payload = {
-          logID: 1007, 
+          logID: logIDNumber, 
           itemID: detailId
         };
   
@@ -200,6 +206,7 @@ const InspectionForm = ({ navigation }) => {
       }
   
       console.log('All details submitted successfully!');
+      navigation.navigate('Home');
     } catch (error) {
       if (error.response) {
         console.error('Server responded with error:', error.response.data);
@@ -220,6 +227,9 @@ const InspectionForm = ({ navigation }) => {
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
             <Ionicons name="arrow-back" size={30} color="#ed5829" />
           </TouchableOpacity>
+
+          {!showBoxes && (
+            <>
           <View style={styles.checkboxGroup}>
             <View style={styles.checkboxContainer}>
               <TouchableOpacity onPress={() => setTrips(0)} style={styles.checkbox}>
@@ -407,8 +417,8 @@ const InspectionForm = ({ navigation }) => {
         <View style={styles.checkboxGroup}>
           <Text style={styles.sectionHeader}>Is there any issues with the truck or trailer?</Text>
             <View style={styles.checkboxContainer}>
-              <TouchableOpacity onPress={() => setDeclaration(0)} style={styles.checkbox}>
-                {declaration === 0 ? (
+              <TouchableOpacity onPress={() => setDeclaration(1)} style={styles.checkbox}>
+                {declaration === 1 ? (
                   <Ionicons name="checkbox" size={24} color="blue" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
@@ -418,8 +428,8 @@ const InspectionForm = ({ navigation }) => {
             </View>
 
             <View style={styles.checkboxContainer}>
-              <TouchableOpacity onPress={() => setDeclaration(1)} style={styles.checkbox}>
-                {declaration === 1 ? (
+              <TouchableOpacity onPress={() => setDeclaration(0)} style={styles.checkbox}>
+                {declaration === 0 ? (
                   <Ionicons name="checkbox" size={24} color="blue" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
@@ -433,7 +443,11 @@ const InspectionForm = ({ navigation }) => {
       <TouchableOpacity onPress={pushLog} style={styles.submitButton}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+      </>
+      )}
       {/* Checkbox Section*/}
+      {showBoxes && (
+      <>
       {/* Tractor/Truck Section */}
       <TouchableOpacity onPress={submitAnswers} style={styles.submitButton}>
         <Text style={styles.submitButtonText}>Submit Details</Text>
@@ -465,6 +479,8 @@ const InspectionForm = ({ navigation }) => {
           <Text style={styles.checkboxLabel}>{label}</Text>
         </View>
       ))}
+      </>
+      )}
 
     </ScrollView>
   );
