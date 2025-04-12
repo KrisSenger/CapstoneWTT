@@ -185,6 +185,7 @@ class LogSerializer(serializers.ModelSerializer):
             'truck_jurisdiction', 'trailer_jurisdiction', 'driver_name',
             'inspection_items', 'any_defects', 'pictures'
         ]
+        #read_only_fields = ['logID']
 
 
 class LogInspectItemsSerializer(serializers.ModelSerializer):
