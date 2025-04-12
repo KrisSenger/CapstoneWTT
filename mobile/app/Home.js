@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate('Login');
   };
   const clearAll = async () => { 
-    try {w
+    try {
       await AsyncStorage.clear();
     } catch (e) {
       console.error('Error clearing AsyncStorage:', e);
