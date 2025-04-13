@@ -4,6 +4,7 @@ import api from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PICKED_TRUCK } from "@/constants";
 import { SelectList } from "react-native-dropdown-select-list";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const TruckPicker = () => {
     const [trucks, setTrucks] = useState([]);
@@ -47,20 +48,33 @@ const TruckPicker = () => {
                     value: truck.truckID.toString(),
                 }))}
                 placeholder="Select a truck"
+
                 
                 boxStyles={{
-                    backgroundColor: "#e5e7eb", 
+                    backgroundColor: "#4b5563", 
                     borderRadius: 10,
                     borderColor: "#e2e8f0", 
                     padding: 12,
                     marginBottom: 15,
+                    
+                    
+                  }}
+                  inputStyles={{
+                    color: "#ffffff", 
                   }}
                   dropdownStyles={{
-                    backgroundColor: "#e5e7eb", 
+                    backgroundColor: "#4b5563", 
                     borderRadius: 10,
                     borderColor: "#e2e8f0",
+                    
                   }}
-                className="bg-gray-"
+                  dropdownTextStyles={{
+                    color: "#ffffff", 
+                }}
+                searchicon={<Icon name="search-outline" size={20} color="#ffffff" />}
+                closeicon={<Icon name="close-circle-outline" size={20} color="#ffffff" />}
+                arrowicon={<Icon name="chevron-down-outline" size={20} color="#ffffff" />}
+                
                 save="value"
                 defaultOption={selectedTruck ? { key: selectedTruck, value: selectedTruck } : null} 
         />

@@ -40,7 +40,7 @@ const HomeScreen = ({ navigation }) => {
       <WelcomeMessage />
 
       {/* Dropdown Lists */}
-      <View className="w-4/5 my-2">
+      <View className="w-4/5 my-2 text-white">
         <TruckPicker />
         <TrailerPicker />
       </View>

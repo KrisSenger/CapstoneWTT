@@ -4,6 +4,7 @@ import api from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SelectList } from "react-native-dropdown-select-list";
 import { PICKED_TRAILER } from "../constants";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const TrailerPicker = () => {
     const [trailers, setTrailers] = useState([]);
@@ -54,19 +55,29 @@ const TrailerPicker = () => {
                 data={trailerOptions}
                 placeholder="Select a trailer"
                 boxStyles={{
-                    backgroundColor: "#e5e7eb", 
+                    backgroundColor: "#4b5563", 
                     borderRadius: 10,
                     borderColor: "#e2e8f0", 
                     padding: 12,
                     marginTop: 10,
                   }}
+                  inputStyles={{
+                    color: "#ffffff",
+                    }}
                   dropdownStyles={{
-                    backgroundColor: "#e5e7eb", 
+                    backgroundColor: "#4b5563", 
                     borderRadius: 10,
                     borderColor: "#e2e8f0",
                     
                   }}
+                  dropdownTextStyles={{
+                    color: "#ffffff", 
+                }}
+                searchicon={<Icon name="search-outline" size={20} color="#ffffff" />}
+                closeicon={<Icon name="close-circle-outline" size={20} color="#ffffff" />}
+                arrowicon={<Icon name="chevron-down-outline" size={20} color="#ffffff" />}
                 save="value"
+                
                 defaultOption={selectedTrailer ? { key: selectedTrailer, value: selectedTrailer } : null} 
         />
         </View>
