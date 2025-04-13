@@ -10,3 +10,7 @@ frontend/src/pages/BuggyLogs.jsx
 upload_test.py
 list_files.py
 test.png
+backend/api/tests.py
+
+/backend/api/migrations
+/backend/api/tests.py

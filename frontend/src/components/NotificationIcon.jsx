@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ACCESS_TOKEN } from '../constants';
 import Popup from './Popup';
 import LogDetail from './LogDetail';
+import IncidentDetail from './IncidentDetail';
 
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -13,27 +14,31 @@ const NotificationIcon = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedLogId, setSelectedLogId] = useState(null);
   const [showLogDetail, setShowLogDetail] = useState(false);
+  const [selectedIncidentId, setSelectedIncidentId] = useState(null);
+  const [showIncidentDetail, setShowIncidentDetail] = useState(false);
+
   const containerRef = useRef(null);
 
   const fetchNotifications = () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    axios.get(`${apiURL}/api/notifications/`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      const notifs = response.data;
-      setNotifications(notifs);
-      setNotificationCount(notifs.length);
-      if (notifs.length > 0) {
-        setActive(true);
-        setTimeout(() => setActive(false), 5000);
-      }
-    })
-    .catch(error => {
-      console.error("Error fetching notifications:", error);
-    });
+    axios
+      .get(`${apiURL}/api/notifications/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const notifs = response.data;
+        setNotifications(notifs);
+        setNotificationCount(notifs.length);
+        if (notifs.length > 0) {
+          setActive(true);
+          setTimeout(() => setActive(false), 5000);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching notifications:", error);
+      });
   };
 
   useEffect(() => {
@@ -42,7 +47,7 @@ const NotificationIcon = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Close notifications dropdown if clicking outside of the container
+  // Close notifications dropdown if clicking outside the container
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -54,43 +59,50 @@ const NotificationIcon = () => {
   }, [containerRef]);
 
   const handleIconClick = () => {
-    setShowNotifications(!showNotifications);
+    setShowNotifications((prev) => !prev);
   };
 
   const markNotificationAsRead = (notificationId) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    axios.put(`${apiURL}/api/notifications/${notificationId}/read/`, {}, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      // Remove the read notification from the list and update the count
-      setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
-      setNotificationCount(prev => prev - 1);
-    })
-    .catch(error => {
-      console.error("Error marking notification as read:", error);
-    });
+    axios
+      .put(`${apiURL}/api/notifications/${notificationId}/read/`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        setNotifications((prev) => prev.filter((notif) => notif.id !== notificationId));
+        setNotificationCount((prev) => prev - 1);
+      })
+      .catch((error) => {
+        console.error("Error marking notification as read:", error);
+      });
   };
 
   const handleNotificationClick = (notification) => {
-    // Mark the notification as read
     markNotificationAsRead(notification.id);
-  
-    // Close the dropdown immediately
     setShowNotifications(false);
-  
-    // Use the log_id from the notification payload to show details if available
+
+    // If this notification has a log_id, show log detail; if it has an incident_id, show incident detail.
     if (notification.log_id) {
       setSelectedLogId(notification.log_id);
       setShowLogDetail(true);
+    } else if (notification.incident_id) {
+      setSelectedIncidentId(notification.incident_id);
+      setShowIncidentDetail(true);
+    } else {
+      console.warn("Notification clicked but no associated detail found.");
     }
-  };  
+  };
 
   const closeLogDetail = () => {
     setShowLogDetail(false);
     setSelectedLogId(null);
+  };
+
+  const closeIncidentDetail = () => {
+    setShowIncidentDetail(false);
+    setSelectedIncidentId(null);
   };
 
   return (
@@ -102,11 +114,11 @@ const NotificationIcon = () => {
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
           />
         </svg>
         {notificationCount > 0 && (
@@ -117,11 +129,12 @@ const NotificationIcon = () => {
       </div>
       {showNotifications && (
         <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg border rounded z-20">
-          <ul>
+          {/* Limit visible notifications height to show roughly 5 items; add scrolling for overflow */}
+          <ul className="max-h-60 overflow-y-auto">
             {notifications.length > 0 ? (
               notifications.map((notification) => (
-                <li 
-                  key={notification.id} 
+                <li
+                  key={notification.id}
                   className="p-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleNotificationClick(notification)}
                 >
@@ -137,6 +150,11 @@ const NotificationIcon = () => {
       {showLogDetail && selectedLogId && (
         <Popup onClose={closeLogDetail}>
           <LogDetail id={selectedLogId} />
+        </Popup>
+      )}
+      {showIncidentDetail && selectedIncidentId && (
+        <Popup onClose={closeIncidentDetail}>
+          <IncidentDetail id={selectedIncidentId} />
         </Popup>
       )}
     </div>
