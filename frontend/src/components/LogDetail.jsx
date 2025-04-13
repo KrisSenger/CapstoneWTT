@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import FormatDate from "./FormatDate";
 import LoadingCircle from "./LoadingCircle";
+import Popup from "./Popup";
 
 function LogDetail({ id }) {
   const [log, setLog] = useState(null);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
 
   useEffect(() => {
     console.info("Fetching log details for log ID:", id);
@@ -205,8 +207,8 @@ function LogDetail({ id }) {
         <p className="border p-2 min-h-[80px]">{log.remarks}</p>
       </div>
 
-      {/* Pictures Section */}
-      <div className="mt-6">
+    {/* Pictures Section */}
+    <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Pictures</h2>
         {log.pictures && log.pictures.length > 0 ? (
           <div className="flex flex-wrap gap-4">
@@ -215,7 +217,8 @@ function LogDetail({ id }) {
                 key={pic.logpicID}
                 src={pic.picture}
                 alt={`Log Picture ${pic.logpicID}`}
-                className="max-w-xs rounded shadow"
+                className="max-w-xs rounded shadow cursor-pointer"
+                onClick={() => setFullScreenImage(pic.picture)}
               />
             ))}
           </div>
@@ -223,8 +226,19 @@ function LogDetail({ id }) {
           <p>No pictures available.</p>
         )}
       </div>
+
+      {/* Full Screen Image Popup */}
+      {fullScreenImage && (
+        <Popup onClose={() => setFullScreenImage(null)}>
+          <img
+            src={fullScreenImage}
+            alt="Full Screen"
+            className="w-full h-full object-contain"
+          />
+        </Popup>
+      )}
     </div>
   );
 }
 
-export default LogDetail
+export default LogDetail;

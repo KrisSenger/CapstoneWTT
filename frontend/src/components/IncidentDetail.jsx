@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import FormatDate from "./FormatDate";
 import LoadingCircle from "./LoadingCircle";
+import Popup from "./Popup";
 
 function IncidentDetail({ id }) {
   const [incident, setIncident] = useState(null);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
 
   useEffect(() => {
     console.info("Fetching incident details for incident ID:", id);
@@ -52,7 +54,8 @@ function IncidentDetail({ id }) {
         <h2 className="text-xl font-semibold mb-2">Summary</h2>
         <p className="border p-2 min-h-[80px]">{incident.summary}</p>
       </div>
-      <div className="mt-6">
+     {/* Pictures Section */}
+     <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Pictures</h2>
         {incident.pictures && incident.pictures.length > 0 ? (
           <div className="flex flex-wrap gap-4">
@@ -61,7 +64,8 @@ function IncidentDetail({ id }) {
                 key={pic.srsincpicID}
                 src={pic.picture}
                 alt={`Incident Picture ${pic.srsincpicID}`}
-                className="max-w-xs rounded shadow"
+                className="max-w-xs rounded shadow cursor-pointer"
+                onClick={() => setFullScreenImage(pic.picture)}
               />
             ))}
           </div>
@@ -69,6 +73,17 @@ function IncidentDetail({ id }) {
           <p>No pictures available.</p>
         )}
       </div>
+
+      {/* Full Screen Image Popup */}
+      {fullScreenImage && (
+        <Popup onClose={() => setFullScreenImage(null)}>
+          <img
+            src={fullScreenImage}
+            alt="Full Screen"
+            className="w-full h-full object-contain"
+          />
+        </Popup>
+      )}
     </div>
   );
 }
