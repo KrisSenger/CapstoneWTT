@@ -129,8 +129,7 @@ const NotificationIcon = () => {
       </div>
       {showNotifications && (
         <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg border rounded z-20">
-          {/* Limit visible notifications height to show roughly 5 items; add scrolling for overflow */}
-          <ul className="max-h-60 overflow-y-auto">
+          <ul className="max-h-80 overflow-y-auto">
             {notifications.length > 0 ? (
               notifications.map((notification) => (
                 <li

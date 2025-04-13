@@ -32,14 +32,16 @@ function Incidents() {
       const fullIncidents = response.data;
       setAllIncidents(fullIncidents);
 
+      // For initial display, you can set incidents to the recent ones.
       const recentIncidents = fullIncidents.filter((incident) => {
         if (!incident.date) return false;
         const incidentDate = new Date(incident.date);
         return incidentDate >= thirtyDaysAgo && incidentDate <= now;
       });
-
       recentIncidents.sort((a, b) => new Date(b.date) - new Date(a.date));
       setIncidents(recentIncidents);
+      // Even though we display recent incidents by default, 
+      // the search will use allIncidents.
       setFilteredIncidents(recentIncidents);
     } catch (error) {
       console.error("Error fetching incidents:", error);
@@ -49,9 +51,10 @@ function Incidents() {
   };
 
   const filterIncidents = () => {
+    // Always start with all incidents so that searches cover the full dataset.
     let filtered = allIncidents;
 
-    // Filter by selected date range if specified
+  // Filter by selected date range if specified
     if (startDate || endDate) {
       filtered = filtered.filter((incident) => {
         if (!incident.date) return false;
@@ -65,8 +68,6 @@ function Incidents() {
         }
         return valid;
       });
-    } else {
-      filtered = incidents;
     }
 
     // Filter by search term with multiple date formats
@@ -74,15 +75,9 @@ function Incidents() {
       const lowerSearchTerm = searchTerm.toLowerCase();
       filtered = filtered.filter((incident) => {
         const incidentID = incident.incidentID.toString().toLowerCase();
-        const employeeID = incident.employeeID
-          ? incident.employeeID.toString().toLowerCase()
-          : "";
-        const truckID = incident.truckID
-          ? incident.truckID.toString().toLowerCase()
-          : "";
-        const trailerID = incident.trailerID
-          ? incident.trailerID.toString().toLowerCase()
-          : "";
+        const employeeID = incident.employeeID ? incident.employeeID.toString().toLowerCase() : "";
+        const truckID = incident.truckID ? incident.truckID.toString().toLowerCase() : "";
+        const trailerID = incident.trailerID ? incident.trailerID.toString().toLowerCase() : "";
         const summary = incident.summary ? incident.summary.toLowerCase() : "";
         let dateMatch = false;
         if (incident.date) {
@@ -112,6 +107,7 @@ function Incidents() {
     setSearchTerm("");
     setStartDate("");
     setEndDate("");
+    // Reset to recent incidents for default display.
     setFilteredIncidents(incidents);
   };
 
