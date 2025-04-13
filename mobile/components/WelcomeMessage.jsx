@@ -21,7 +21,7 @@ const WelcomeMessage = () => {
 
     return (
         <View >
-            <Text className="text-center text-2xl font-semibold">
+            <Text className="text-center text-3xl font-semibold text-white">
                 Welcome, {user?.first_name || 'Guest'}!
             </Text>
         </View>

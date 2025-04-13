@@ -42,7 +42,7 @@ const Login = () => {
       <View className="flex-1 items-center justify-center px-6">
         <Image
           source={require("../assets/images/CTS.png")}
-          style={{ width: 600, height: 400 }} // 👈 Adjust size as needed
+          style={{ width: 500, height: 400 }} 
           resizeMode="contain"
         />
       </View>
@@ -52,7 +52,7 @@ const Login = () => {
         <Text className="text-3xl font-bold text-blue-600 mb-2 text-center">
           What The Truck!
         </Text>
-        <Text className="text-lg text-gray-300 text-center">
+        <Text className="text-lg text-gray-200 text-center">
           Sign in to access your supervisor dashboard
         </Text>
 

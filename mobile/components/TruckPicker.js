@@ -47,8 +47,20 @@ const TruckPicker = () => {
                     value: truck.truckID.toString(),
                 }))}
                 placeholder="Select a truck"
-                boxStyles={{ margin: 10 }}
-                dropdownStyles={{ marginHorizontal: 10 }}
+                
+                boxStyles={{
+                    backgroundColor: "#e5e7eb", 
+                    borderRadius: 10,
+                    borderColor: "#e2e8f0", 
+                    padding: 12,
+                    marginBottom: 15,
+                  }}
+                  dropdownStyles={{
+                    backgroundColor: "#e5e7eb", 
+                    borderRadius: 10,
+                    borderColor: "#e2e8f0",
+                  }}
+                className="bg-gray-"
                 save="value"
                 defaultOption={selectedTruck ? { key: selectedTruck, value: selectedTruck } : null} 
         />

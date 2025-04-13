@@ -53,8 +53,19 @@ const TrailerPicker = () => {
                 setSelected={storeSelectedTrailer}
                 data={trailerOptions}
                 placeholder="Select a trailer"
-                boxStyles={{ margin: 10 }}
-                dropdownStyles={{ marginHorizontal: 10 }}
+                boxStyles={{
+                    backgroundColor: "#e5e7eb", 
+                    borderRadius: 10,
+                    borderColor: "#e2e8f0", 
+                    padding: 12,
+                    marginTop: 10,
+                  }}
+                  dropdownStyles={{
+                    backgroundColor: "#e5e7eb", 
+                    borderRadius: 10,
+                    borderColor: "#e2e8f0",
+                    
+                  }}
                 save="value"
                 defaultOption={selectedTrailer ? { key: selectedTrailer, value: selectedTrailer } : null} 
         />
