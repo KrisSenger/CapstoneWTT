@@ -76,7 +76,7 @@ class WTT_Trailer(models.Model):
 
 
 class WTT_Log(models.Model):
-    logID = models.IntegerField(primary_key=True)
+    logID = models.AutoField(primary_key=True)
     employee = models.ForeignKey(
         WTT_User,
         on_delete=models.CASCADE,
@@ -168,11 +168,13 @@ class Notification(models.Model):
     id = models.AutoField(primary_key=True)
     message = models.CharField(max_length=255)
     log_id = models.IntegerField(null=True, blank=True)
+    incident_id = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.message} ({self.created_at})"
+
 
 
 

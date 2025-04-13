@@ -49,9 +49,16 @@ function Logs() {
   };
 
   const filterLogs = () => {
+    // If no search term and no date filter, use 30 days of recent logs
+    if (!searchTerm && !startDate && !endDate) {
+      setFilteredLogs(logs);
+      return;
+    }
+  
+    // Start with the full logs
     let filtered = allLogs;
-
-    // Filter by date range if specified
+  
+    // Apply date filter
     if (startDate || endDate) {
       filtered = filtered.filter((log) => {
         if (!log.date) return false;
@@ -65,11 +72,9 @@ function Logs() {
         }
         return valid;
       });
-    } else {
-      filtered = logs;
     }
-
-    // Filter by search term with multiple date formats
+  
+    // Apply search filter
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
       filtered = filtered.filter((log) => {
@@ -105,6 +110,7 @@ function Logs() {
     }
     setFilteredLogs(filtered);
   };
+  
 
   const reset = () => {
     setSearchTerm("");
