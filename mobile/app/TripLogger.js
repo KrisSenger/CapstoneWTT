@@ -8,6 +8,7 @@ import TruckPicker from '../components/TruckPicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PICKED_TRUCK, PICKED_TRAILER } from '../constants';
 import api from '../api';
+import UploadLogPicture from './../components/UploadLogPicture';
 
 
   
@@ -145,7 +146,7 @@ const InspectionForm = ({ navigation }) => {
   const pushLog = async () => {
     try {
       const response = await api.post('/api/log/add/', {
-        logID: 2010,
+        logID: 1040,
         trip: trips,
         location: userLocation,
         city: userCity,
@@ -174,7 +175,7 @@ const InspectionForm = ({ navigation }) => {
     } catch (error) {
       console.error('Error creating log:', error);
       console.log({
-        logID: 2010,
+        logID: logIDNumber,
         trip: trips,
         location: userLocation,
         city: userCity,
@@ -217,6 +218,15 @@ const InspectionForm = ({ navigation }) => {
       }
     }
   };
+  const addPicture = async () => {
+    const result = await UploadLogPicture(logIDNumber);
+    if (result) {
+      alert('✅ Image uploaded successfully!');
+      // Refresh state or image list here
+    } else {
+      alert('❌ Upload failed. Try again.');
+    }
+  }
 
 
 
@@ -415,7 +425,9 @@ const InspectionForm = ({ navigation }) => {
         </View>
         {/* Declaration Checkbox */}
         <View style={styles.checkboxGroup}>
-          <Text style={styles.sectionHeader}>Is there any issues with the truck or trailer?</Text>
+          <Text style={styles.sectionHeader}>Issues</Text>
+
+          
             <View style={styles.checkboxContainer}>
               <TouchableOpacity onPress={() => setDeclaration(1)} style={styles.checkbox}>
                 {declaration === 1 ? (
@@ -478,7 +490,13 @@ const InspectionForm = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.checkboxLabel}>{label}</Text>
         </View>
+
       ))}
+          <View>
+          <TouchableOpacity onPress={addPicture} style={styles.submitButton}>
+              <Text style={styles.submitButtonText}>Add a Picture</Text>
+          </TouchableOpacity>
+          </View>
       </>
       )}
 
