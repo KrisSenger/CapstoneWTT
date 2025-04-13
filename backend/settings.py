@@ -154,9 +154,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "http://209.38.128.48",
     "http://192.168.1.89",
+    'http://192.168.1.66',
 ]
 CORS_ORIGIN_WHITELIST = [
     'http://192.168.1.89:8081',
+    'http://192.168.1.66:8000',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
