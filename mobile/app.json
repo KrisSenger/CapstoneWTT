@@ -8,13 +8,31 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.adoebadee.WhatTheTruck",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.adoebadee.WhatTheTruck",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      "networkSecurityConfig": {
+        "domainConfig": [
+          {
+            "domain": "209.38.128.48",
+            "allowCleartextTraffic": true
+          }
+        ]
       }
     },
     "web": {
@@ -24,6 +42,15 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.25",
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -36,6 +63,21 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7011be8d-7436-45b3-bfab-eb51a7c4abd3"
+      }
+    },
+    "owner": "kssait",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7011be8d-7436-45b3-bfab-eb51a7c4abd3"
     }
   }
 }

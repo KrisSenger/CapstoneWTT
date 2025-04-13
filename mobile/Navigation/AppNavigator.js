@@ -7,6 +7,7 @@ import LogbookViewer from '../app/LogbookViewer';
 import TripLogger from '../app/TripLogger';
 import IncidentReporter from '../app/IncidentReporter';
 
+
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {

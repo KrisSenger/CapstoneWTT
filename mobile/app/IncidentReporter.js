@@ -1,26 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { SelectList } from 'react-native-dropdown-select-list';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api'; 
+import { PICKED_TRUCK, PICKED_TRAILER } from '../constants'; 
+
 
 const IncidentReporter = ({ navigation }) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
-  const [selectedVehicle, setSelectedVehicle] = useState('');
-  const [selectedTrailer, setSelectedTrailer] = useState('');
+  const [user, setUser] = useState(null);
+  const [date, setDate] = useState(new Date());
+  const [truck, setTruck] = useState(null);
+  const [trailer, setTrailer] = useState(null);
+  const [trailerDisplay, setTrailerDisplay] = useState(null);
 
-  const vehicleData = [
-    { key: '1', value: 'Vehicle 1' },
-    { key: '2', value: 'Vehicle 2' },
-    // Add more vehicles as needed
-  ];
 
-  const trailerData = [
-    { key: '1', value: 'Trailer 1' },
-    { key: '2', value: 'Trailer 2' },
-    // Add more trailers as needed
-  ];
+
+  useEffect(() => {
+      const fetchAllData = async () => {
+        try {
+          const storedTruck = await AsyncStorage.getItem(PICKED_TRUCK);
+          const storedTrailer = await AsyncStorage.getItem(PICKED_TRAILER);
+  
+    
+
+          const response = await api.get('/api/user/data/me/');
+          setUser(response.data);
+    
+          
+
+          if(storedTrailer === "Other" || storedTrailer === "No Trailer"){
+            setTrailerDisplay(storedTrailer);
+            setTrailer(null);
+          }else{
+            setTrailerDisplay(storedTrailer);
+            setTrailer(storedTrailer);
+          }
+          setTruck(storedTruck);
+
+        } catch (error) {
+          console.error('Error loading truck/trailer data:', error);
+        }
+      };
+    
+      fetchAllData();
+    }, []);
+
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -35,9 +62,24 @@ const IncidentReporter = ({ navigation }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('Incident Details:', text);
     console.log('Image:', image);
+    try {
+      const response = await api.post('/api/incident/add/', {
+        date: date,
+        summary: text,
+        truckID: truck,
+        trailerID: trailer,
+        date: date,
+        employeeID: user.employeeID,
+      });
+      console.log('Incident submitted successfully:', response.data);
+      navigation.navigate('Home');
+    }
+    catch (error) {
+      console.error('Error submitting incident:', error);
+    }
   };
 
   return (
@@ -47,18 +89,10 @@ const IncidentReporter = ({ navigation }) => {
         <Ionicons name="arrow-back" size={30} color="#ed5829" />
       </TouchableOpacity>
 
-      {/* Dropdown Lists */}
+      {/*Selected Truck and Trailer */}
       <View style={styles.buttonRow}>
-        <SelectList 
-          setSelected={(val) => setSelectedVehicle(val)} 
-          data={vehicleData} 
-          save="value"
-        />
-        <SelectList 
-          setSelected={(val) => setSelectedTrailer(val)} 
-          data={trailerData} 
-          save="value"
-        />
+        <Text style={{ fontSize: 16, color: '#000' }}>Truck: {truck}</Text>
+        <Text style={{ fontSize: 16, color: '#000' }}>Trailer: {trailerDisplay}</Text>
       </View>
 
       {/* Text Input */}
