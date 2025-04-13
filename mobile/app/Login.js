@@ -53,7 +53,7 @@ const Login = () => {
           What The Truck!
         </Text>
         <Text className="text-lg text-gray-200 text-center">
-          Sign in to access your supervisor dashboard
+          Sign in to access your driver dashboard
         </Text>
 
         <Text className="mb-1 mt-6 text-white/90">Username</Text>
