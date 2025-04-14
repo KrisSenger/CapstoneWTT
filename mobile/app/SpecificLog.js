@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import api from '../api';
 import LoadingCircle from '../components/LoadingCircle';
+import DynamicImage from '../components/DynamicImage';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -102,9 +103,10 @@ const SpecificLog = ({navigation}) => {
           <View >
             {log.pictures.map((pic) => (
               <TouchableOpacity key={pic.logpicID}>
-                <Image source={{ uri: pic.picture }} />
+                <DynamicImage imageUri={pic.picture} />
               </TouchableOpacity>
             ))}
+
           </View>
         ) : (
           <Text>No pictures available.</Text>
