@@ -557,7 +557,7 @@ def get_document_ai_processor_name(client):
 @parser_classes([MultiPartParser, FormParser])
 def process_document(request):
     """
-    API endpoint to process a document using Google Document AI and return the extracted data.
+    API endpoint to process a document using Google Document AI and store the extracted data in the archive.
     """
     if 'document' not in request.FILES:
         return Response(
