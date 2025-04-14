@@ -77,6 +77,7 @@ const TrailerPicker = ({onChange}) => {
                 searchicon={<Icon name="search-outline" size={20} color="#ffffff" />}
                 closeicon={<Icon name="close-circle-outline" size={20} color="#ffffff" />}
                 arrowicon={<Icon name="chevron-down-outline" size={20} color="#ffffff" />}
+                searchPlaceholder="Search"
                 save="value"
                 
                 defaultOption={selectedTrailer ? { key: selectedTrailer, value: selectedTrailer } : null} 
