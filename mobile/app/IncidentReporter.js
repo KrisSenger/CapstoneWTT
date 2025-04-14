@@ -75,6 +75,7 @@ const IncidentReporter = ({ navigation }) => {
         employeeID: user.employeeID,
       });
       console.log('Incident submitted successfully:', response.data);
+      alert('Incident created successfully!');
       navigation.navigate('Home');
     }
     catch (error) {
