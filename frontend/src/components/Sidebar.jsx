@@ -22,6 +22,9 @@ const Sidebar = ({ isSidebarOpen, children }) => {
                             <a href="/Logs" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Logs</a>
                         </li>
                         <li>
+                            <a href="/Archive" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Archive</a>
+                        </li>
+                        <li>
                             <a href="/Incidents" className="block p-4 text-white rounded-lg hover:bg-gray-100 hover:text-gray-600 transition">Incidents</a>
                         </li>
                         <li>
