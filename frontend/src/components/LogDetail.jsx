@@ -207,8 +207,8 @@ function LogDetail({ id }) {
         <p className="border p-2 min-h-[80px]">{log.remarks}</p>
       </div>
 
-    {/* Pictures Section */}
-    <div className="mt-6">
+      {/* Pictures Section */}
+      <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Pictures</h2>
         {log.pictures && log.pictures.length > 0 ? (
           <div className="flex flex-wrap gap-4">
