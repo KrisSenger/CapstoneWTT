@@ -11,17 +11,17 @@ def get_driver_name(log):
 
         return "Unknown Employee"
 
+
+# Uncomment to turn on individual notifications for inspection items
 @receiver(post_save, sender=WTT_Log_Inspect_Det)
 def notify_on_inspection_item_added(sender, instance, created, **kwargs):
     if created:
-        log = instance.logID  # ForeignKey to WTT_Log
-        item = instance.itemID  # ForeignKey to WTT_Log_Inspect_Items
-        driver_name = get_driver_name(log)
-        message = (
-            f"Inspection item '{item.item_name}' added to log #{log.logID} "
-            f"by {driver_name}."
-        )
-        Notification.objects.create(message=message, log_id=log.logID)
+        log = instance.logID
+        if not Notification.objects.filter(log_id=log.logID, message__icontains="Inspection item").exists():
+            driver_name = get_driver_name(log)
+            message = f"Inspection item added to log #{log.logID} by driver {driver_name}."
+            Notification.objects.create(message=message, log_id=log.logID)
+
 
 @receiver(post_save, sender=WTT_Srs_Incident)
 def notify_on_incident_added(sender, instance, created, **kwargs):
