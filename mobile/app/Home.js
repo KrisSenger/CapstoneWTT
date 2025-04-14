@@ -37,10 +37,8 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View className="flex-1 justify-evenly items-center bg-gray-800 h-full">
-      {/* Logout Button */}
-      <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={handleLogout}>
-        <Ionicons name="log-out-outline" size={30} color="#ed5829" />
-      </TouchableOpacity>
+
+      
 
       <WelcomeMessage />
 
@@ -80,6 +78,14 @@ const HomeScreen = ({ navigation }) => {
         onPress={() => navigation.navigate('IncidentReporter')}
       >
         <Text className="text-white text-lg font-semibold">Incident Reporter</Text>
+      </TouchableOpacity>
+
+      {/* Logout Button */}
+      <TouchableOpacity
+        className="right-36 z-10  mt-20 bg-[#ed5829] w-20 h-10 justify-center items-center rounded-xl "
+        onPress={handleLogout}
+      >
+        <Text className="text-white text-lg font-semibold">Logout</Text>
       </TouchableOpacity>
 
     </View>
