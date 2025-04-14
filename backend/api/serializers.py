@@ -234,3 +234,13 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = '__all__'
+
+class ArchiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WTT_Archive
+        fields = '__all__'
+
+class ArchiveDetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WTT_Archive_Det
+        fields = '__all__'

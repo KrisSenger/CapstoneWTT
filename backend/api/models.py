@@ -175,6 +175,30 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.message} ({self.created_at})"
 
+class WTT_Archive(models.Model):
+    archiveID = models.AutoField(primary_key=True)
+    trip = models.IntegerField()  # 0=PRE-TRIP, 1=POST-TRIP
+    location = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
+    date = models.CharField(max_length=50, blank=True)
+    load = models.IntegerField(null=True)
+    height = models.IntegerField(null=True)
+    defects_en_route = models.CharField(max_length=1000, null=True)
+    incidents = models.CharField(max_length=1000, null=True)
+    remarks = models.CharField(max_length=1000, null=True)
+    declaration = models.IntegerField()  # 0=unchecked, 1=both checked
+    signature = models.CharField(max_length=100, null=True)
 
+    class Meta:
+        db_table = 'WTT_Archive'
+
+
+class WTT_Archive_Det(models.Model):
+    detailID = models.AutoField(primary_key=True, null=False)
+    archiveID = models.ForeignKey('WTT_Archive', on_delete=models.CASCADE, db_column='archiveID')
+    itemID = models.ForeignKey('WTT_Log_Inspect_Items', on_delete=models.CASCADE, db_column='itemID')
+
+    class Meta:
+        db_table = 'WTT_Archive_Det'
 
 

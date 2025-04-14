@@ -573,12 +573,7 @@ def process_document(request):
         client = get_document_ai_client()
         processor_name = get_document_ai_processor_name(client)
 
-        # with open(file_path, "rb") as image:
-        #     image_content = image.read()
-
-        raw_document = documentai.RawDocument(content=file_content, mime_type=file_mime_type
-        )
-
+        raw_document = documentai.RawDocument(content=file_content, mime_type=file_mime_type)
         request = documentai.ProcessRequest(
             name=processor_name,
             raw_document=raw_document,
@@ -588,17 +583,62 @@ def process_document(request):
 
         # Extract all entities from the document
         extracted_data = {}
-        if document and document.entities:  # Check if document and entities exist
+        if document and document.entities:
             for entity in document.entities:
                 entity_type = entity.type_
                 entity_value = entity.mention_text
                 extracted_data[entity_type] = entity_value
 
-        # Return the raw extracted data
-        return Response({
-            "document_name": document_file.name,
-            "extracted_data": extracted_data
-        })
+        try:
+            # Parse trip value (0=PRE-TRIP, 1=POST-TRIP)
+            trip = 0 if extracted_data.get('PRE-TRIP', '').upper() == 'PRE-TRIP' else 1
+
+            # Parse declaration value (0=unchecked, 1=both checked)
+            declaration = 1 if (
+                extracted_data.get('NO_MAJOR_DEFECTS', '').upper() == 'YES' and 
+                extracted_data.get('NO_DEFECTS', '').upper() == 'YES'
+            ) else 0
+            
+            # Create the archive entry
+            archive = WTT_Archive.objects.create(
+                trip=trip,
+                location=extracted_data.get('LOCATION_OF_INSPECTION', ''),
+                city=extracted_data.get('CITY', ''),
+                date=extracted_data.get('INSPECTION_DATE', ''),
+                load=int(extracted_data.get('LOAD_HEIGHT-WIDTH1', 0)) if extracted_data.get('load_height_width1') else None,
+                height=int(extracted_data.get('LOAD_HEIGHT-WIDTH1', 0)) if extracted_data.get('load_height_width1') else None,
+                defects_en_route=extracted_data.get('DEFECTS_EN_ROUTE', ''),
+                remarks=extracted_data.get('REMARKS', ''),
+                declaration=declaration,
+            )
+
+            # Create inspection details for checked items
+            checked_items = []
+            for item_id in range(1, 50):  # Check all possible inspection items
+                item_key = f"item_{item_id}"
+                if extracted_data.get(item_key, '').upper() == 'YES':
+                    try:
+                        item = WTT_Log_Inspect_Items.objects.get(itemID=item_id)
+                        WTT_Archive_Det.objects.create(
+                            archiveID=archive,
+                            itemID=item
+                        )
+                        checked_items.append(item_id)
+                    except WTT_Log_Inspect_Items.DoesNotExist:
+                        continue
+
+            return Response({
+                "message": "Document processed and data stored successfully",
+                "archive_id": archive.archiveID,
+                "checked_items": checked_items,
+                "extracted_data": extracted_data
+            })
+
+        except Exception as e:
+            return Response(
+                {"error": f"Error processing document: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     except Exception as e:
         return Response(
