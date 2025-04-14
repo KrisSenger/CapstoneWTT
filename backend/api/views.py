@@ -614,9 +614,63 @@ def process_document(request):
 
             # Create inspection details for checked items
             checked_items = []
-            for item_id in range(1, 50):  # Check all possible inspection items
-                item_key = f"item_{item_id}"
-                if extracted_data.get(item_key, '').upper() == 'YES':
+            
+            # Map form field names to item IDs
+            field_to_item_map = {
+                'EMERGENCY_EQUIPMENT-SAFETY_DEVICES': 1,
+                'BRAKES_PEDALS-BOOSTER-GAUGES': 2,
+                'FIFTH_WHEEL': 3,
+                'BATTERY': 4,
+                'TRAILER2_SUSPENSION': 5,
+                'TRAILER1_FRAME-BODY': 6,
+                'TRAILER1_DANGEROUS_GOODS_PLACARD': 7,
+                'DRIVER_CONTROLS': 8,
+                'TRAILER1_LAMPS-REFLECTORS': 9,
+                'TRAILER2_FRAME-BODY': 10,
+                'TRAILER2_CARGO_SECUREMENT': 11,
+                'POWER_STEERING': 12,
+                'HORN': 13,
+                'TOWING_ATTACHMENT': 14,
+                'DOCUMENTS': 15,
+                'AIR_BRAKE_ADJUSTMENTS': 16,
+                'TRAILER2_COUPLING_DEVICES': 17,
+                'EXHAUST_SYSTEM': 18,
+                'TRAILER1_BRAKE_ADJUSTMENTS': 19,
+                'TRAILER1_BRAKE_CONNECTIONS': 20,
+                'TRAILER1_CARGO_SECUREMENT': 21,
+                'TRAILER1_WHEELS-HUBS-FASTENERS': 22,
+                'DRIVER_SEAT': 23,
+                'FUEL_SYSTEM': 24,
+                'DEFROSTER-HEATER': 25,
+                'HYDRAULIC_BRAKE_FLUID': 26,
+                'PINTLE_HOOK': 27,
+                'TRAILER2_WHEELS-HUBS-FASTENERS': 28,
+                'TRAILER1_TIRES': 29,
+                'GLASS-MIRRORS': 30,
+                'PARKING_BRAKES': 31,
+                'TRAILER2_BRAKE_CONNECTIONS': 32,
+                'COMPRESSOR': 33,
+                'STEERING_MECHANISM': 34,
+                'TRAILER2_BRAKE_ADJUSTMENTS': 35,
+                'TRAILER2_DANGEROUS_GOODS_PLACARD': 36,
+                'WINDSHIELD_WIPER-WASHER': 37,
+                'RADIATOR': 38,
+                'HOSES-CONNECTIONS': 39,
+                'TRAILER1_PLATE_VALIDATION_STICKER': 40,
+                'GENERAL': 41,
+                'TRAILER2_INSPECTION_DECAL': 42,
+                'TRAILER1_INSPECTION_DECAL': 43,
+                'TRAILER1_SUSPENSION': 44,
+                'TRAILER2_LAMPS-REFLECTORS': 45,
+                'BRAKES_WARNING-LIGHTS_LOW-PRESSURE': 46,
+                'TRAILER2_TIRES': 47
+            }
+
+            # Check each field for checkbox symbols
+            for field_name, item_id in field_to_item_map.items():
+                field_value = extracted_data.get(field_name, '')
+                # Check for various checkbox symbols
+                if any(symbol in field_value for symbol in ['☑', '✔', 'X']):
                     try:
                         item = WTT_Log_Inspect_Items.objects.get(itemID=item_id)
                         WTT_Archive_Det.objects.create(
