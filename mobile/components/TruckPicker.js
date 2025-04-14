@@ -6,7 +6,7 @@ import { PICKED_TRUCK } from "@/constants";
 import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const TruckPicker = () => {
+const TruckPicker = ({onChange}) => {
     const [trucks, setTrucks] = useState([]);
     const [selectedTruck, setSelectedTruck] = useState("");
     
@@ -25,6 +25,7 @@ const TruckPicker = () => {
     const storeSelectedTruck = async (truckID) => {
         try {
             await AsyncStorage.setItem(PICKED_TRUCK, truckID);
+            onChange?.(truckID);
         } catch (error) {
             console.error('Error storing selected truck:', error);
         }

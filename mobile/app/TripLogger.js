@@ -146,7 +146,6 @@ const InspectionForm = ({ navigation }) => {
   const pushLog = async () => {
     try {
       const response = await api.post('/api/log/add/', {
-        logID: 1040,
         trip: trips,
         location: userLocation,
         city: userCity,
@@ -171,11 +170,11 @@ const InspectionForm = ({ navigation }) => {
         navigation.navigate('Home');
       }
       console.log('Log created successfully:', response.data);
+      alert('Log created successfully!');
 
     } catch (error) {
       console.error('Error creating log:', error);
       console.log({
-        logID: logIDNumber,
         trip: trips,
         location: userLocation,
         city: userCity,
