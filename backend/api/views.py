@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views import View
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -12,7 +13,12 @@ from .serializers import *
 from django.db import IntegrityError
 from .utils import get_driver_name
 from functools import wraps
+from google.cloud import documentai_v1 as documentai
+from dotenv import load_dotenv
+from .forms import *
+import os
 
+load_dotenv()
 
 def login_view(request):
     return render(request, 'Login.jsx')
@@ -111,6 +117,15 @@ def updateUser(request, pk):
     except ObjectDoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
+        # Prevent a non‑superuser staff member from modifying a superuser's critical attributes
+    if request.user.is_staff and not request.user.is_superuser:
+        # Disallow any password change when the target user is a superuser.
+        if user.is_superuser and 'password' in request.data:
+            return Response(
+                {"error": "You are not authorized to change the password of a superuser."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
     if request.user.is_staff and not request.user.is_superuser:
         if 'is_superuser' in request.data:
             if request.data['is_superuser'] != user.is_superuser:
@@ -524,3 +539,116 @@ def addIncident(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Google DocumentAI integration
+
+def get_document_ai_client():
+    """Initializes and returns the Document AI client."""
+    # Authenticate using the service account key file
+    client_options = {"api_endpoint": "us-documentai.googleapis.com"}
+    client = documentai.DocumentProcessorServiceClient(client_options=client_options)
+    return client
+
+def get_document_ai_processor_name(client):
+    """Returns the full resource name of the Document AI processor."""
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    location = "us"
+    processor_id = "b8172323254ae090"
+    processor_name = client.processor_path(project_id, location, processor_id)
+    return processor_name
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def process_document(request):
+    """
+    API endpoint to process a document using Google Document AI and store the extracted data in the archive.
+    """
+    if 'document' not in request.FILES:
+        return Response(
+            {"error": "No document file provided"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    document_file = request.FILES['document']
+    file_content = document_file.read()
+    file_mime_type = document_file.content_type
+
+    try:
+        client = get_document_ai_client()
+        processor_name = get_document_ai_processor_name(client)
+
+        raw_document = documentai.RawDocument(content=file_content, mime_type=file_mime_type)
+        request = documentai.ProcessRequest(
+            name=processor_name,
+            raw_document=raw_document,
+        )
+        result = client.process_document(request=request)
+        document = result.document
+
+        # Extract all entities from the document
+        extracted_data = {}
+        if document and document.entities:
+            for entity in document.entities:
+                entity_type = entity.type_
+                entity_value = entity.mention_text
+                extracted_data[entity_type] = entity_value
+
+        try:
+            # Parse trip value (0=PRE-TRIP, 1=POST-TRIP)
+            trip = 0 if extracted_data.get('PRE-TRIP', '').upper() == 'PRE-TRIP' else 1
+
+            # Parse declaration value (0=unchecked, 1=both checked)
+            declaration = 1 if (
+                extracted_data.get('NO_MAJOR_DEFECTS', '').upper() == 'YES' and 
+                extracted_data.get('NO_DEFECTS', '').upper() == 'YES'
+            ) else 0
+            
+            # Create the archive entry
+            archive = WTT_Archive.objects.create(
+                trip=trip,
+                location=extracted_data.get('LOCATION_OF_INSPECTION', ''),
+                city=extracted_data.get('CITY', ''),
+                date=extracted_data.get('INSPECTION_DATE', ''),
+                load=int(extracted_data.get('LOAD_HEIGHT-WIDTH1', 0)) if extracted_data.get('load_height_width1') else None,
+                height=int(extracted_data.get('LOAD_HEIGHT-WIDTH1', 0)) if extracted_data.get('load_height_width1') else None,
+                defects_en_route=extracted_data.get('DEFECTS_EN_ROUTE', ''),
+                remarks=extracted_data.get('REMARKS', ''),
+                declaration=declaration,
+            )
+
+            # Create inspection details for checked items
+            checked_items = []
+            for item_id in range(1, 50):  # Check all possible inspection items
+                item_key = f"item_{item_id}"
+                if extracted_data.get(item_key, '').upper() == 'YES':
+                    try:
+                        item = WTT_Log_Inspect_Items.objects.get(itemID=item_id)
+                        WTT_Archive_Det.objects.create(
+                            archiveID=archive,
+                            itemID=item
+                        )
+                        checked_items.append(item_id)
+                    except WTT_Log_Inspect_Items.DoesNotExist:
+                        continue
+
+            return Response({
+                "message": "Document processed and data stored successfully",
+                "archive_id": archive.archiveID,
+                "checked_items": checked_items,
+                "extracted_data": extracted_data
+            })
+
+        except Exception as e:
+            return Response(
+                {"error": f"Error processing document: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    except Exception as e:
+        return Response(
+            {"error": f"Error processing document: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+                

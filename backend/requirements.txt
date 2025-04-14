@@ -12,3 +12,4 @@ dj-database-url
 boto3
 django-storages
 Pillow
+google-cloud-documentai

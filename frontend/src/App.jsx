@@ -10,6 +10,8 @@ import Profile from './pages/Profile';
 import ManageEquipment from './pages/ManageEquipment';
 import ManageUsers from './pages/ManageUsers';
 import ProtectedRoute from './components/ProtectedRoute';
+import DocumentUpload from './components/DocumentUpload';
+import Upload from './pages/Upload';
 
 
 export function Logout() {
@@ -66,6 +68,12 @@ const App = () => {
           <Route path="/manage-users" element={
             <ProtectedRoute>
               <ManageUsers />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/upload" element={
+            <ProtectedRoute>
+              <Upload />
             </ProtectedRoute>
           } />
 

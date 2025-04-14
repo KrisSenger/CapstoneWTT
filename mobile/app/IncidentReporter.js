@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Image, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api'; 
 import { PICKED_TRUCK, PICKED_TRAILER } from '../constants'; 
-
 
 const IncidentReporter = ({ navigation }) => {
   const [text, setText] = useState('');
@@ -16,21 +15,15 @@ const IncidentReporter = ({ navigation }) => {
   const [trailer, setTrailer] = useState(null);
   const [trailerDisplay, setTrailerDisplay] = useState(null);
 
-
-
   useEffect(() => {
       const fetchAllData = async () => {
         try {
           const storedTruck = await AsyncStorage.getItem(PICKED_TRUCK);
           const storedTrailer = await AsyncStorage.getItem(PICKED_TRAILER);
   
-    
-
           const response = await api.get('/api/user/data/me/');
           setUser(response.data);
     
-          
-
           if(storedTrailer === "Other" || storedTrailer === "No Trailer"){
             setTrailerDisplay(storedTrailer);
             setTrailer(null);
@@ -47,7 +40,6 @@ const IncidentReporter = ({ navigation }) => {
     
       fetchAllData();
     }, []);
-
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -84,117 +76,45 @@ const IncidentReporter = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 p-4 bg-gray-800">
       {/* Back Arrow */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
         <Ionicons name="arrow-back" size={30} color="#ed5829" />
       </TouchableOpacity>
 
       {/*Selected Truck and Trailer */}
-      <View style={styles.buttonRow}>
-        <Text style={{ fontSize: 16, color: '#000' }}>Truck: {truck}</Text>
-        <Text style={{ fontSize: 16, color: '#000' }}>Trailer: {trailerDisplay}</Text>
+      <View className="flex-col items-end ">
+        <Text className="text-xl text-bold text-white p-2 mt-14">Truck: {truck}</Text>
+        <Text className="text-xl text-bold   text-white ">Trailer: {trailerDisplay}</Text>
       </View>
 
       {/* Text Input */}
-      <View style={styles.inputRow}>
+      <View className="flex-row border border-gray-200 rounded-lg mt-28 p-2 bg-gray-600">
         <TextInput
-          style={styles.input}
+          className="flex-1 h-60 text-white"
           placeholder="Enter incident details here"
-          placeholderTextColor='#888'
+          placeholderTextColor="#d1d5db"
+          textAlignVertical='top'
+        
           value={text}
           onChangeText={setText}
           multiline={true}
           numberOfLines={10}
         />
-        <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-          <Text style={styles.imagePickerText}>📷</Text>
+        <TouchableOpacity className="absolute bottom-2 right-2" onPress={pickImage}>
+          <Text className="text-2xl">📷</Text>
         </TouchableOpacity>
       </View>
 
       {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+      <TouchableOpacity className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center" onPress={handleSubmit}>
+        <Text className="text-white text-lg">Submit</Text>
       </TouchableOpacity>
 
       {/* Image Preview */}
-      {image && <Image source={{ uri: image }} style={styles.image} />}
+      {image && <Image source={{ uri: image }} className="w-full h-48 mt-4 rounded-lg" />}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#FFFFFF',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 15,
-    zIndex: 10, // Ensures it stays on top
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 80,
-    width: '100%',
-  },
-  button: {
-    flex: 1,
-    backgroundColor: '#0057e1',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginHorizontal: 15,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 8,
-    marginTop: 150,
-    height: 150,
-  },
-  input: {
-    flex: 1,
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  imagePicker: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-  },
-  submitButton: {
-    backgroundColor: '#0057e1',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    },
-
-    submitButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-      },    
-
-
-  imagePickerText: {
-    color: '#ed5829',
-    fontSize: 16,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    marginTop: 10,
-  },
-});
 
 export default IncidentReporter;
