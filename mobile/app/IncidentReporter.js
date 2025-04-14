@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, TouchableOpacity } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { View, Text, TextInput, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api'; 
 import { PICKED_TRUCK, PICKED_TRAILER } from '../constants'; 
+import UploadLogPicture from './../components/UploadLogPicture';
+
 
 const IncidentReporter = ({ navigation }) => {
   const [text, setText] = useState('');
@@ -14,16 +15,19 @@ const IncidentReporter = ({ navigation }) => {
   const [truck, setTruck] = useState(null);
   const [trailer, setTrailer] = useState(null);
   const [trailerDisplay, setTrailerDisplay] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+
 
   useEffect(() => {
       const fetchAllData = async () => {
         try {
           const storedTruck = await AsyncStorage.getItem(PICKED_TRUCK);
           const storedTrailer = await AsyncStorage.getItem(PICKED_TRAILER);
-  
+
           const response = await api.get('/api/user/data/me/');
           setUser(response.data);
-    
+
           if(storedTrailer === "Other" || storedTrailer === "No Trailer"){
             setTrailerDisplay(storedTrailer);
             setTrailer(null);
@@ -41,18 +45,39 @@ const IncidentReporter = ({ navigation }) => {
       fetchAllData();
     }, []);
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [ImagePicker.MediaType.Images, ImagePicker.MediaType.Videos],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
 
-    if (!result.canceled) {
-      setImage(result.uri);
-    }
-  };
+    const addPicture = async () => {
+      console.log('Adding picture...');
+      const asset = await UploadLogPicture(); 
+      if (asset) {
+        setSelectedImage(asset); 
+      }
+    };
+    const uploadSelectedImage = async (incidentIDNum) => {
+      if (!selectedImage) return;
+    
+      const fileName = selectedImage.uri.split('/').pop();
+      const match = /\.(\w+)$/.exec(fileName ?? '');
+      const fileType = match ? `image/${match[1]}` : `image`;
+    
+      const formData = new FormData();
+      formData.append('incidentID', incidentIDNum);
+      formData.append('picture', {
+        uri: selectedImage.uri,
+        name: fileName,
+        type: fileType,
+      });
+    
+      try {
+        const response = await api.post('/api/incident/picture/add/', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        alert('✅ Image uploaded successfully!');
+      } catch (error) {
+        console.error('❌ Upload failed:', error.response?.data || error.message);
+        alert('❌ Upload failed. Try again.');
+      }
+    };
 
   const handleSubmit = async () => {
     console.log('Incident Details:', text);
@@ -67,7 +92,11 @@ const IncidentReporter = ({ navigation }) => {
         employeeID: user.employeeID,
       });
       console.log('Incident submitted successfully:', response.data);
+
       alert('Incident created successfully!');
+      if(selectedImage) {
+        await uploadSelectedImage(response.data.incidentID);
+      }
       navigation.navigate('Home');
     }
     catch (error) {
@@ -76,7 +105,7 @@ const IncidentReporter = ({ navigation }) => {
   };
 
   return (
-    <View className="flex-1 p-4 bg-gray-800">
+    <ScrollView className="flex-1 p-4 bg-gray-800">
       {/* Back Arrow */}
       <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
         <Ionicons name="arrow-back" size={30} color="#ed5829" />
@@ -101,19 +130,43 @@ const IncidentReporter = ({ navigation }) => {
           multiline={true}
           numberOfLines={10}
         />
-        <TouchableOpacity className="absolute bottom-2 right-2" onPress={pickImage}>
-          <Text className="text-2xl">📷</Text>
+      </View>
+  <View>
+  <TouchableOpacity onPress={addPicture} className="mt-5 p-4 bg-blue-600 rounded items-center">
+      <Text className="text-white text-base">Add a Picture</Text>
+  </TouchableOpacity>
+  </View>
+
+  {selectedImage && (
+    <View style={{ alignSelf: 'center', marginVertical: 10 }}>
+      <View style={{ position: 'relative' }}>
+        <Image
+          source={{ uri: selectedImage.uri }}
+          style={{ width: 200, height: 200, borderRadius: 10 }}
+        />
+        <TouchableOpacity
+          onPress={() => setSelectedImage(null)}
+          style={{
+            position: 'absolute',
+            top: -8,
+            right: -8,
+            backgroundColor: '#fff',
+            borderRadius: 12,
+            padding: 2,
+            elevation: 4,
+          }}
+        >
+          <Ionicons name="close" size={20} color="#ff3b30" />
         </TouchableOpacity>
       </View>
+    </View>
+  )}
 
       {/* Submit Button */}
       <TouchableOpacity className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center" onPress={handleSubmit}>
         <Text className="text-white text-lg">Submit</Text>
       </TouchableOpacity>
-
-      {/* Image Preview */}
-      {image && <Image source={{ uri: image }} className="w-full h-48 mt-4 rounded-lg" />}
-    </View>
+    </ScrollView>
   );
 };
 
