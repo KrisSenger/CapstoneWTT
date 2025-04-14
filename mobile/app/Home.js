@@ -50,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
           <TrailerPicker onChange={setTrailerSelected} />
       </View>
       {!isReady && (
-        <Text className="text-red-400 text-sm text-center">
+        <Text className="text-red-400 text-xl text-center">
           Please select a truck and trailer to proceed
         </Text>
       )}
