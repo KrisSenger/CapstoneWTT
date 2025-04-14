@@ -111,6 +111,15 @@ def updateUser(request, pk):
     except ObjectDoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
+        # Prevent a non‑superuser staff member from modifying a superuser's critical attributes
+    if request.user.is_staff and not request.user.is_superuser:
+        # Disallow any password change when the target user is a superuser.
+        if user.is_superuser and 'password' in request.data:
+            return Response(
+                {"error": "You are not authorized to change the password of a superuser."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
     if request.user.is_staff and not request.user.is_superuser:
         if 'is_superuser' in request.data:
             if request.data['is_superuser'] != user.is_superuser:
