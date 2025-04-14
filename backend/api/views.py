@@ -279,12 +279,18 @@ def deleteTrailer(request, pk):
 # Log Views
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-@permission_classes([AllowAny])
 def getLogData(request):
     logs = WTT_Log.objects.select_related('truck', 'trailer', 'employee').all()
     serializer = LogSerializer(logs, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getUserLogs(request):
+    user = request.user
+    logs = WTT_Log.objects.select_related('truck', 'trailer', 'employee').filter(employee_id=user.employeeID)
+    serializer = LogSerializer(logs, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -395,6 +395,7 @@ const InspectionForm = ({ navigation }) => {
             value={remarks}
             onChangeText={setRemarks}
             multiline={true}
+            textAlignVertical='top'
             numberOfLines={10}
           />
         </View>

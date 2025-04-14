@@ -6,6 +6,7 @@ import LoginScreen from '../app/Login';
 import LogbookViewer from '../app/LogbookViewer';
 import TripLogger from '../app/TripLogger';
 import IncidentReporter from '../app/IncidentReporter';
+import SpecificLog from '../app/SpecificLog';
 
 
 const Stack = createStackNavigator();
@@ -23,6 +24,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="LogbookViewer" component={LogbookViewer} />
+        <Stack.Screen name="SpecificLog" component={SpecificLog} />
         <Stack.Screen name="TripLogger" component={TripLogger} />
         <Stack.Screen name="IncidentReporter" component={IncidentReporter} />
       </Stack.Navigator>
