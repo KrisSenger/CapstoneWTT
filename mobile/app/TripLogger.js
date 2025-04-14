@@ -167,10 +167,11 @@ const InspectionForm = ({ navigation }) => {
       if(declaration === 0){
         setShowBoxes(true);
       }else{
+        alert('Log created successfully!');
         navigation.navigate('Home');
       }
       console.log('Log created successfully:', response.data);
-      alert('Log created successfully!');
+      
 
     } catch (error) {
       console.error('Error creating log:', error);
