@@ -42,7 +42,7 @@ const Login = () => {
       <View className="flex-1 items-center justify-center px-6">
         <Image
           source={require("../assets/images/CTS.png")}
-          style={{ width: 500, height: 400 }} 
+          style={{ width: 450, height: 400 }} 
           resizeMode="contain"
         />
       </View>
@@ -52,10 +52,6 @@ const Login = () => {
         <Text className="text-3xl font-bold text-blue-600 mb-2 text-center">
           What The Truck!
         </Text>
-        <Text className="text-lg text-gray-200 text-center">
-          Sign in to access your driver dashboard
-        </Text>
-
         <Text className="mb-1 mt-6 text-white/90">Username</Text>
         <TextInput
           className="border border-gray-200 rounded-lg px-4 py-2 mb-4 text-white/90"
@@ -63,6 +59,7 @@ const Login = () => {
           value={userName}
           onChangeText={setUserName}
           placeholderTextColor="#ccc"
+          autoCapitalize="none"
         />
 
         <Text className="mb-1 text-white/90">Password</Text>
@@ -74,6 +71,7 @@ const Login = () => {
             value={password}
             onChangeText={setPassword}
             placeholderTextColor="#ccc"
+            autoCapitalize="none"
           />
           <TouchableOpacity
             className="absolute right-3 top-1.5"

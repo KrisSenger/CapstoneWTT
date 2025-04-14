@@ -14,3 +14,4 @@ backend/api/tests.py
 
 /backend/api/migrations
 /backend/api/tests.py
+whatthetruck-*.json

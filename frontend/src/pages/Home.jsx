@@ -35,6 +35,9 @@ function Home() {
           <a href="/Incidents" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
             Incidents
           </a>
+          <a href="/upload" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+            Upload Logs
+          </a>
         </div>
       </Sidebar>
     </div>

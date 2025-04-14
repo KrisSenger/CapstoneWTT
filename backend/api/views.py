@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views import View
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -12,7 +13,12 @@ from .serializers import *
 from django.db import IntegrityError
 from .utils import get_driver_name
 from functools import wraps
+from google.cloud import documentai_v1 as documentai
+from dotenv import load_dotenv
+from .forms import *
+import os
 
+load_dotenv()
 
 def login_view(request):
     return render(request, 'Login.jsx')
@@ -527,3 +533,76 @@ def addIncident(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Google DocumentAI integration
+
+def get_document_ai_client():
+    """Initializes and returns the Document AI client."""
+    # Authenticate using the service account key file
+    client_options = {"api_endpoint": "us-documentai.googleapis.com"}
+    client = documentai.DocumentProcessorServiceClient(client_options=client_options)
+    return client
+
+def get_document_ai_processor_name(client):
+    """Returns the full resource name of the Document AI processor."""
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    location = "us"
+    processor_id = "b8172323254ae090"
+    processor_name = client.processor_path(project_id, location, processor_id)
+    return processor_name
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def process_document(request):
+    """
+    API endpoint to process a document using Google Document AI and return the extracted data.
+    """
+    if 'document' not in request.FILES:
+        return Response(
+            {"error": "No document file provided"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    document_file = request.FILES['document']
+    file_content = document_file.read()
+    file_mime_type = document_file.content_type
+
+    try:
+        client = get_document_ai_client()
+        processor_name = get_document_ai_processor_name(client)
+
+        # with open(file_path, "rb") as image:
+        #     image_content = image.read()
+
+        raw_document = documentai.RawDocument(content=file_content, mime_type=file_mime_type
+        )
+
+        request = documentai.ProcessRequest(
+            name=processor_name,
+            raw_document=raw_document,
+        )
+        result = client.process_document(request=request)
+        document = result.document
+
+        # Extract all entities from the document
+        extracted_data = {}
+        if document and document.entities:  # Check if document and entities exist
+            for entity in document.entities:
+                entity_type = entity.type_
+                entity_value = entity.mention_text
+                extracted_data[entity_type] = entity_value
+
+        # Return the raw extracted data
+        return Response({
+            "document_name": document_file.name,
+            "extracted_data": extracted_data
+        })
+
+    except Exception as e:
+        return Response(
+            {"error": f"Error processing document: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+                

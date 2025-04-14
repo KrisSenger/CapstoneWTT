@@ -6,7 +6,7 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { PICKED_TRAILER } from "../constants";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const TrailerPicker = () => {
+const TrailerPicker = ({onChange}) => {
     const [trailers, setTrailers] = useState([]);
     const [selectedTrailer, setSelectedTrailer] = useState("");
     const trailerOptions = [
@@ -34,6 +34,7 @@ const TrailerPicker = () => {
     const storeSelectedTrailer = async (trailerID) => {
         try {
             await AsyncStorage.setItem(PICKED_TRAILER, trailerID);
+            onChange?.(trailerID);
         } catch (error) {
             console.error('Error storing selected trailer:', error);
         }
