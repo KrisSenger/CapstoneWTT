@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -10,8 +10,8 @@ import Profile from './pages/Profile';
 import ManageEquipment from './pages/ManageEquipment';
 import ManageUsers from './pages/ManageUsers';
 import ProtectedRoute from './components/ProtectedRoute';
-import DocumentUpload from './components/DocumentUpload';
 import Upload from './pages/Upload';
+import Archive from './pages/Archive';
 
 
 export function Logout() {
@@ -68,6 +68,12 @@ const App = () => {
           <Route path="/manage-users" element={
             <ProtectedRoute>
               <ManageUsers />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/archive" element={
+            <ProtectedRoute>
+              <Archive />
             </ProtectedRoute>
           } />
 

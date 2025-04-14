@@ -57,12 +57,19 @@ const TruckPicker = ({onChange}) => {
                     borderColor: "#e2e8f0", 
                     padding: 12,
                     marginBottom: 15,
+                    color: "#ffffff",
+                    
                     
                     
                   }}
+                  
+                  
                   inputStyles={{
-                    color: "#ffffff", 
+                    color: "#ffffff",
+                    textColor: "#ffffff",
+                    placeholderTextColor: '#ffffff', 
                   }}
+
                   dropdownStyles={{
                     backgroundColor: "#4b5563", 
                     borderRadius: 10,

@@ -51,4 +51,9 @@ urlpatterns = [
     
     # Document AI URL
     path('documents/process/', process_document, name='process_document'),
+
+    # Archive URLs
+    path('archive/data/', getArchiveData, name='get_archive_data'),
+    path('archive/<int:pk>/', getArchive, name='get_archive'),
+    path('archive/<int:archive_id>/items/', getArchiveItems, name='get_archive_items'),
 ]

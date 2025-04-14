@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SelectList } from 'react-native-dropdown-select-list'
 import TrailerPicker from '../components/TrailerPicker';
@@ -68,8 +68,6 @@ const InspectionForm = ({ navigation }) => {
     'Trailer Wheels Hubs Fasteners': 24,
   };
   const [user, setUser] = useState(null);
-  const [trailers, setTrailers] = useState([]);
-  const [trucks, setTrucks] = useState([]);
   const [trailerDisplay, setTrailerDisplay] = useState('');
   const [truckDisplay, setTruckDisplay] = useState('');
   const [trailer, setTrailer] = useState(null);
@@ -91,6 +89,7 @@ const InspectionForm = ({ navigation }) => {
   const [trips, setTrips] = useState(0);
   const [declaration, setDeclaration] = useState(1);
   const [logIDNumber, setLogIDNumber] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const toggleAnswer = (id) => {
     setAnswers((prev) =>
@@ -104,13 +103,10 @@ const InspectionForm = ({ navigation }) => {
         const storedTruck = await AsyncStorage.getItem(PICKED_TRUCK);
         const storedTrailer = await AsyncStorage.getItem(PICKED_TRAILER);
 
-  
         const { data: truckData } = await api.get('/api/truck/data/');
         const { data: trailerData } = await api.get('/api/trailer/data/');
         const response = await api.get('/api/user/data/me/');
         setUser(response.data);
-        setTrucks(truckData);
-        setTrailers(trailerData);
   
         
         const selectedTrailer = trailerData.find(
@@ -200,11 +196,10 @@ const InspectionForm = ({ navigation }) => {
           itemID: detailId
         };
   
-        console.log('Sending payload:', payload); // optional debug log
-  
+        console.log('Sending payload:', payload);
         await api.post('api/log-inspect-det/add/', payload);
       }
-  
+      await uploadSelectedImage();
       console.log('All details submitted successfully!');
       navigation.navigate('Home');
     } catch (error) {
@@ -218,15 +213,36 @@ const InspectionForm = ({ navigation }) => {
     }
   };
   const addPicture = async () => {
-    const result = await UploadLogPicture(logIDNumber);
-    if (result) {
+    const asset = await UploadLogPicture(); 
+    if (asset) {
+      setSelectedImage(asset); 
+    }
+  };
+  const uploadSelectedImage = async () => {
+    if (!selectedImage) return;
+  
+    const fileName = selectedImage.uri.split('/').pop();
+    const match = /\.(\w+)$/.exec(fileName ?? '');
+    const fileType = match ? `image/${match[1]}` : `image`;
+  
+    const formData = new FormData();
+    formData.append('logID', logIDNumber);
+    formData.append('picture', {
+      uri: selectedImage.uri,
+      name: fileName,
+      type: fileType,
+    });
+  
+    try {
+      const response = await api.post('/api/log/picture/add/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       alert('✅ Image uploaded successfully!');
-      // Refresh state or image list here
-    } else {
+    } catch (error) {
+      console.error('❌ Upload failed:', error.response?.data || error.message);
       alert('❌ Upload failed. Try again.');
     }
-  }
-
+  };
 
 
   return (
@@ -452,7 +468,7 @@ const InspectionForm = ({ navigation }) => {
           </View>
 
       {/* Submit Button */}
-      <TouchableOpacity onPress={pushLog} className="mt-5 p-4 bg-blue-600 rounded items-center p-5">
+      <TouchableOpacity onPress={pushLog} className="mt-5 bg-blue-600 rounded items-center p-5">
         <Text className="text-white text-base ">Submit</Text>
       </TouchableOpacity>
       </>
@@ -461,9 +477,7 @@ const InspectionForm = ({ navigation }) => {
       {showBoxes && (
       <>
       {/* Tractor/Truck Section */}
-      <TouchableOpacity onPress={submitAnswers} className="mt-24 p-4 bg-blue-600 rounded items-center">
-        <Text className="text-white text-base">Submit Details</Text>
-      </TouchableOpacity>
+
       <Text className="text-xl font-bold mt-5 mb-2 text-white">Tractor/Truck:</Text>
       {Object.entries(truckKeyMap).map(([label, id]) => (
         <View key={`truck-${id}`} className="flex-row items-center mb-2 ">
@@ -497,6 +511,36 @@ const InspectionForm = ({ navigation }) => {
               <Text className="text-white text-base">Add a Picture</Text>
           </TouchableOpacity>
           </View>
+
+          {selectedImage && (
+            <View style={{ alignSelf: 'center', marginVertical: 10 }}>
+              <View style={{ position: 'relative' }}>
+                <Image
+                  source={{ uri: selectedImage.uri }}
+                  style={{ width: 200, height: 200, borderRadius: 10 }}
+                />
+                <TouchableOpacity
+                  onPress={() => setSelectedImage(null)}
+                  style={{
+                    position: 'absolute',
+                    top: -8,
+                    right: -8,
+                    backgroundColor: '#fff',
+                    borderRadius: 12,
+                    padding: 2,
+                    elevation: 4,
+                  }}
+                >
+                  <Ionicons name="close" size={20} color="#ff3b30" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          
+          <TouchableOpacity onPress={submitAnswers} className="mt-24 p-4 bg-blue-600 rounded items-center">
+            <Text className="text-white text-base">Submit Details</Text>
+          </TouchableOpacity>
+          
       </>
       )}
 
