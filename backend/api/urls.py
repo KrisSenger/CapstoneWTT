@@ -29,9 +29,11 @@ urlpatterns = [
     # Log URLs
     path('log/data/', getLogData, name='get_log_data'),
     path('log/<int:pk>/', getLog, name='get_log'),
+    path('log/data/me/', getUserLogs, name='get_user_logs'),
     path('log/add/', addLog, name='add_log'),
     path('log/update/<int:pk>/', updateLog, name='update_log'),
     path('log/delete/<int:pk>/', deleteLog, name='delete_log'),
+
 
     # Inspection Item URLs
     path('log-inspect-det/add/', addInspectionDetail, name='add_inspection_detail'),
