@@ -46,4 +46,7 @@ urlpatterns = [
 
     path('log/picture/add/', addLogPicture, name='add_log_picture'),
     path('incident/picture/add/', addIncidentPicture, name='add_incident_picture'),
+    
+    # Document AI URL
+    path('documents/process/', process_document, name='process_document'),
 ]
