@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import WelcomeMessage from '../components/WelcomeMessage';
 import TruckPicker from '../components/TruckPicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,32 +52,40 @@ const HomeScreen = ({ navigation }) => {
           Please select a truck and trailer to proceed
         </Text>
       )}
-      {/* Navigation Buttons */}
       <TouchableOpacity
-        className="w-4/5 my-2 bg-blue-700 h-14 justify-center items-center rounded-xl hover:bg-blue-400"
+        className="w-4/5 my-2 h-14 rounded-xl bg-blue-700/70"
         onPress={() => navigation.navigate('LogbookViewer')}
       >
-        <Text className="text-white text-lg font-semibold">Logbook Viewer</Text>
+        <View className="flex-row items-center justify-center h-full gap-x-2">
+          <MaterialCommunityIcons name="notebook-outline" size={20} color="white" />
+          <Text className="text-white text-lg font-semibold">Logbook Viewer</Text>
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         disabled={!isReady}
-        className={`w-4/5 my-2 h-14 justify-center items-center rounded-xl ${
-          isReady ? 'bg-blue-700' : 'bg-gray-500'
+        className={`w-4/5 my-2 h-14 rounded-xl ${
+          isReady ? 'bg-blue-700/70' : 'bg-gray-500'
         }`}
         onPress={() => navigation.navigate('TripLogger')}
       >
-        <Text className="text-white text-lg font-semibold">Pre/Post Trip Logger</Text>
+        <View className="flex-row items-center justify-center h-full gap-x-2">
+          <FontAwesome5 name="truck" size={20} color="white" />
+          <Text className="text-white text-lg font-semibold">Pre/Post Trip Logger</Text>
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         disabled={!isReady}
-        className={`w-4/5 my-2 h-14 justify-center items-center rounded-xl ${
-          isReady ? 'bg-blue-700' : 'bg-gray-500'
+        className={`w-4/5 my-2 h-14 rounded-xl ${
+          isReady ? 'bg-blue-700/70' : 'bg-gray-500'
         }`}
         onPress={() => navigation.navigate('IncidentReporter')}
       >
-        <Text className="text-white text-lg font-semibold">Incident Reporter</Text>
+        <View className="flex-row items-center justify-center h-full gap-x-2">
+          <MaterialIcons name="warning" size={20} color="white" />
+          <Text className="text-white text-lg font-semibold">Incident Reporter</Text>
+        </View>
       </TouchableOpacity>
 
       {/* Logout Button */}

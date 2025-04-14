@@ -107,7 +107,7 @@ const IncidentReporter = ({ navigation }) => {
       </View>
 
       {/* Submit Button */}
-      <TouchableOpacity className="mt-4 p-4 bg-blue-600 rounded-lg items-center" onPress={handleSubmit}>
+      <TouchableOpacity className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center" onPress={handleSubmit}>
         <Text className="text-white text-lg">Submit</Text>
       </TouchableOpacity>
 
