@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity,} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { TextInput } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import TrailerPicker from '../components/TrailerPicker';
 import TruckPicker from '../components/TruckPicker';
@@ -230,54 +229,55 @@ const InspectionForm = ({ navigation }) => {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView className="flex-1 p-5 bg-gray-800 pb-10"contentContainerStyle={{ paddingBottom: 25 }}>
           {/* Back Button */}
-          
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
             <Ionicons name="arrow-back" size={30} color="#ed5829" />
           </TouchableOpacity>
 
           {!showBoxes && (
             <>
-          <View style={styles.checkboxGroup}>
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity onPress={() => setTrips(0)} style={styles.checkbox}>
+          <View className="flex-row justify-around mt-20">
+            <View className="flex-row items-center">
+              <TouchableOpacity onPress={() => setTrips(0)} className="mr-2">
                 {trips === 0 ? (
-                  <Ionicons name="checkbox" size={24} color="blue" />
+                  <Ionicons name="checkbox" size={24} color="#2563eb" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
               </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>Pre-Trip</Text>
+              <Text className="text-2xl text-white font-bold">Pre-Trip</Text>
             </View>
 
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity onPress={() => setTrips(1)} style={styles.checkbox}>
+            <View className="flex-row justify-center ">
+              <TouchableOpacity onPress={() => setTrips(1)} className="mr-2">
                 {trips === 1 ? (
-                  <Ionicons name="checkbox" size={24} color="blue" />
+                  <Ionicons name="checkbox" size={24} color="#2563eb" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
               </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>Post-Trip</Text>
+              <Text className="text-2xl text-white font-bold">Post-Trip</Text>
             </View>
           </View>
-         <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Truck</Text>
-            <Text>{truckDisplay}</Text>
-          </View>
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Trailer</Text>
-            <Text>{trailerDisplay}</Text>
-          </View>
+        <View className="flex-row justify-around mt-5 ">
+          <View className=" mb-4">
+              <Text className="text-2xl font-bold mt-5 mb-2 text-white">Truck:</Text>
+              <Text className="text-white text-xl font-bold">{truckDisplay}</Text>
+            </View>
+            <View className="mb-4">
+              <Text className="text-2xl font-bold mt-5 mb-2 text-white">Trailer:</Text>
+              <Text className="text-white text-xl font-bold">{trailerDisplay}</Text>
+            </View>
+         </View>
           
           {/* Carrier field */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Carrier</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Carrier:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter carrier name here"
-              placeholderTextColor='#888'
+              placeholderTextColor='#d1d5db'
               value={carrier}
               onChangeText={setCarrier}
               multiline={true}
@@ -285,12 +285,12 @@ const InspectionForm = ({ navigation }) => {
             />
           </View>
           {/* Carrier address field */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Carrier Address</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Carrier Address:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter carrier address here"
-              placeholderTextColor='#888'
+              placeholderTextColor='#d1d5db'
               value={carrierAddress}
               onChangeText={setCarrierAddress}
               multiline={true}
@@ -298,12 +298,12 @@ const InspectionForm = ({ navigation }) => {
             />
           </View>
           {/* City */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>City</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">City:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter carrier address here"
-              placeholderTextColor='#888'
+              placeholderTextColor='#d1d5db'
               value={userCity}
               onChangeText={setUserCity}
               multiline={true}
@@ -311,12 +311,12 @@ const InspectionForm = ({ navigation }) => {
             />
           </View>
           {/* Location */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Location</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Location</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter a short description of the location"
-              placeholderTextColor='#888'
+              placeholderTextColor='#d1d5db'
               value={userLocation}
               onChangeText={setUserLocation}
               multiline={true}
@@ -324,17 +324,18 @@ const InspectionForm = ({ navigation }) => {
             />
           </View>
           {/* Date */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Date</Text>
-            <Text>{date.toLocaleString()}</Text>
+          <View className="flex-row items-center mb-2 mt-5 ">
+            <Text className="text-xl font-bold text-white p-2 ">Date:</Text>
+            <Text className="text-xl text-white">{date.toLocaleString()}</Text>
           </View>
+
           {/* Load Weight*/}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Load Weight</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Load Weight:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the weight of the load"
-              placeholderTextColor="#888"
+              placeholderTextColor="#d1d5db"
               value={loadWeight}
               onChangeText={setLoadWeight}
               keyboardType="numeric"
@@ -343,12 +344,12 @@ const InspectionForm = ({ navigation }) => {
             />
           </View>
           {/* Load Height*/}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Load Height</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Load Height:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the height of the load"
-              placeholderTextColor="#888"
+              placeholderTextColor="#d1d5db"
               value={loadHeight}
               onChangeText={setLoadHeight}
               keyboardType="numeric"
@@ -357,12 +358,12 @@ const InspectionForm = ({ navigation }) => {
             />
           </View> 
           {/* Odomoter */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Odomoter</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Odomoter:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the current KM count of the vehicle"
-              placeholderTextColor='#888'
+              placeholderTextColor='#d1d5db'
               value={odometer}
               onChangeText={setOdometer}
               multiline={true}
@@ -371,12 +372,12 @@ const InspectionForm = ({ navigation }) => {
           </View>
 
           {/* Trailer License Plate */}
-          <View style={styles.remarksContainer}>
-            <Text style={styles.sectionHeader}>Trailer License Plate</Text>
+          <View className="mb-4">
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Trailer License Plate:</Text>
             <TextInput
-              style={styles.smallInput}
+              className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the license plate for the trailer"
-              placeholderTextColor='#888'
+              placeholderTextColor='#d1d5db'
               value={trailerPlate}
               onChangeText={setTrailerPlate}
               multiline={true}
@@ -384,12 +385,12 @@ const InspectionForm = ({ navigation }) => {
             />
           </View>
                 {/* Remarks Textbox */}
-          <View style={styles.remarksContainer}>
-          <Text style={styles.sectionHeader}>Remarks</Text>
+          <View className="mb-4">
+          <Text className="text-xl font-bold mt-5 mb-2 text-white">Remarks:</Text>
           <TextInput
-            style={styles.remarksInput}
+            className="h-24 border border-gray-200 rounded p-2 text-white bg-gray-600 "
             placeholder="Enter incident details here"
-            placeholderTextColor='#888'
+            placeholderTextColor='#d1d5db'
             value={remarks}
             onChangeText={setRemarks}
             multiline={true}
@@ -397,12 +398,12 @@ const InspectionForm = ({ navigation }) => {
           />
         </View>
         {/* Defects Textbox */}
-        <View style={styles.remarksContainer}>
-          <Text style={styles.sectionHeader}>Defects en Route</Text>
+        <View className="mb-4">
+          <Text className="text-xl font-bold mt-5 mb-2 text-white">Defects en Route:</Text>
           <TextInput
-            style={styles.remarksInput}
+            className="h-24 border border-gray-200 rounded p-2 text-white bg-gray-600"
             placeholder="Enter defect details here"
-            placeholderTextColor='#888'
+            placeholderTextColor='#d1d5db'
             value={defects}
             onChangeText={setDefects}
             multiline={true}
@@ -410,12 +411,12 @@ const InspectionForm = ({ navigation }) => {
           />
         </View>
         {/* Defects Textbox */}
-        <View style={styles.remarksContainer}>
-          <Text style={styles.sectionHeader}>Incidents</Text>
+        <View className="mb-4">
+          <Text className="text-xl font-bold mt-5 mb-2 text-white">Incidents:</Text>
           <TextInput
-            style={styles.remarksInput}
+            className="h-24 border border-gray-200 rounded p-2 text-white bg-gray-600 "
             placeholder="Enter Incident details here"
-            placeholderTextColor='#888'
+            placeholderTextColor='#d1d5db'
             value={incidents}
             onChangeText={setIncidents}
             multiline={true}
@@ -423,36 +424,34 @@ const InspectionForm = ({ navigation }) => {
           />
         </View>
         {/* Declaration Checkbox */}
-        <View style={styles.checkboxGroup}>
-          <Text style={styles.sectionHeader}>Issues</Text>
-
-          
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity onPress={() => setDeclaration(1)} style={styles.checkbox}>
+        <View className="flex-row items-center space-x-2  my-2">
+          <Text className="text-xl font-bold  text-white p-2 mr-3">Issues:</Text>
+            <View className="flex-row items-center">
+              <TouchableOpacity onPress={() => setDeclaration(1)} className="mr-1">
                 {declaration === 1 ? (
-                  <Ionicons name="checkbox" size={24} color="blue" />
+                  <Ionicons name="checkbox" size={24} color="#2563eb" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
               </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>No</Text>
+              <Text className="text-base text-white mr-2">No</Text>
             </View>
 
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity onPress={() => setDeclaration(0)} style={styles.checkbox}>
+            <View className="flex-row items-center">
+              <TouchableOpacity onPress={() => setDeclaration(0)} className="mr-1">
                 {declaration === 0 ? (
-                  <Ionicons name="checkbox" size={24} color="blue" />
+                  <Ionicons name="checkbox" size={24} color="#2563eb" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
               </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>Yes</Text>
+              <Text className="text-base text-white">Yes</Text>
             </View>
           </View>
 
       {/* Submit Button */}
-      <TouchableOpacity onPress={pushLog} style={styles.submitButton}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+      <TouchableOpacity onPress={pushLog} className="mt-5 p-4 bg-blue-600 rounded items-center p-5">
+        <Text className="text-white text-base ">Submit</Text>
       </TouchableOpacity>
       </>
       )}
@@ -460,40 +459,40 @@ const InspectionForm = ({ navigation }) => {
       {showBoxes && (
       <>
       {/* Tractor/Truck Section */}
-      <TouchableOpacity onPress={submitAnswers} style={styles.submitButton}>
-        <Text style={styles.submitButtonText}>Submit Details</Text>
+      <TouchableOpacity onPress={submitAnswers} className="mt-24 p-4 bg-blue-600 rounded items-center">
+        <Text className="text-white text-base">Submit Details</Text>
       </TouchableOpacity>
-      <Text style={styles.sectionHeader}>Tractor/Truck</Text>
+      <Text className="text-xl font-bold mt-5 mb-2 text-white">Tractor/Truck:</Text>
       {Object.entries(truckKeyMap).map(([label, id]) => (
-        <View key={`truck-${id}`} style={styles.checkboxContainer}>
-          <TouchableOpacity onPress={() => toggleAnswer(id)} style={styles.checkbox}>
+        <View key={`truck-${id}`} className="flex-row items-center mb-2 ">
+          <TouchableOpacity onPress={() => toggleAnswer(id)} className="mr-2">
             {answers.includes(id) ? (
-              <Ionicons name="checkbox" size={24} color="blue" />
+              <Ionicons name="checkbox" size={24} color="#2563eb" />
             ) : (
               <Ionicons name="square-outline" size={24} color="gray" />
             )}
           </TouchableOpacity>
-          <Text style={styles.checkboxLabel}>{label}</Text>
+          <Text className="text-lg text-white p-1">{label}</Text>
         </View>
       ))}
 
-      <Text style={styles.sectionHeader}>Trailer</Text>
+      <Text className="text-xl font-bold mt-5 mb-2 text-white">Trailer:</Text>
       {Object.entries(trailerKeyMap).map(([label, id]) => (
-        <View key={`trailer-${id}`} style={styles.checkboxContainer}>
-          <TouchableOpacity onPress={() => toggleAnswer(id)} style={styles.checkbox}>
+        <View key={`trailer-${id}`} className="flex-row items-center mb-2">
+          <TouchableOpacity onPress={() => toggleAnswer(id)} className="mr-2">
             {answers.includes(id) ? (
-              <Ionicons name="checkbox" size={24} color="blue" />
+              <Ionicons name="checkbox" size={24} color="#2563eb" />
             ) : (
               <Ionicons name="square-outline" size={24} color="gray" />
             )}
           </TouchableOpacity>
-          <Text style={styles.checkboxLabel}>{label}</Text>
+          <Text className="text-lg text-white p-1">{label}</Text>
         </View>
 
       ))}
           <View>
-          <TouchableOpacity onPress={addPicture} style={styles.submitButton}>
-              <Text style={styles.submitButtonText}>Add a Picture</Text>
+          <TouchableOpacity onPress={addPicture} className="mt-5 p-4 bg-blue-600 rounded items-center">
+              <Text className="text-white text-base">Add a Picture</Text>
           </TouchableOpacity>
           </View>
       </>
@@ -502,94 +501,5 @@ const InspectionForm = ({ navigation }) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 15,
-    zIndex: 10,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  sectionHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 8,
-    marginTop: 150,
-    height: 150,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  checkbox: {
-    marginRight: 10,
-  },
-  checkboxLabel: {
-    fontSize: 16,
-  },
-  remarksInput: {
-    height: 100,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    textAlignVertical: 'top', 
-  },
-  smallInput: {
-    height: 50,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    textAlignVertical: 'top', 
-  },
-  submitButton: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#0057e1',
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  submitButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  checkboxGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 10,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  checkbox: {
-    marginRight: 8,
-  },
-  checkboxLabel: {
-    fontSize: 16,
-  },
-});
 
 export default InspectionForm;
