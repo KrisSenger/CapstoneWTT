@@ -41,7 +41,7 @@ const LogbookViewer = () => {
   return (
     <View className="flex-1 bg-gray-800">
       {/* Back Arrow */}
-      <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity className=" top-14 left-4 z-10" onPress={() => navigation.navigate('Home')}>
         <Ionicons name="arrow-back" size={30} color="#ed5829" />
       </TouchableOpacity>
 
