@@ -32,18 +32,8 @@ function Archive() {
       const fullArchives = response.data;
       setAllArchives(fullArchives);
 
-      // Sort archives by date in descending order, handling missing dates
-      const sortedArchives = [...fullArchives].sort((a, b) => {
-        // If both have dates, compare them
-        if (a.date && b.date) {
-          return new Date(b.date) - new Date(a.date);
-        }
-        // If only one has a date, put the one with date first
-        if (a.date) return -1;
-        if (b.date) return 1;
-        // If neither has a date, keep original order
-        return 0;
-      }).slice(0, 30);
+      // Sort archives by archiveID in descending order
+      const sortedArchives = [...fullArchives].sort((a, b) => b.archiveID - a.archiveID).slice(0, 30);
 
       setArchives(sortedArchives);
       setFilteredArchives(sortedArchives);
@@ -140,12 +130,6 @@ function Archive() {
           endDate={endDate}
           setEndDate={setEndDate}
         />
-        {/* Display default date range if no filters applied */}
-        {!searchTerm && !startDate && !endDate && (
-          <div className="ml-4 text-sm text-gray-500">
-            Showing archives from {thirtyDaysAgo.toLocaleDateString()} to {now.toLocaleDateString()}
-          </div>
-        )}
         <div className="mx-auto border border-gray-300 shadow-lg rounded-lg overflow-hidden">
           {/* Table header */}
           <div className="w-full">
