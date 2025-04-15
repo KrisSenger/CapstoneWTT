@@ -4,10 +4,15 @@
     "slug": "WhatTheTruck",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "transparent",
+      "translucent": true
+    },
     
     "ios": {
       "supportsTablet": true,
@@ -18,7 +23,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.adoebadee.WhatTheTruck",
