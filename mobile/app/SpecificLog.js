@@ -6,14 +6,14 @@ import DynamicImage from '../components/DynamicImage';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-const SpecificLog = () => {
+const SpecificLog = ({navigation}) => {
   const route = useRoute();
-  const navigation = useNavigation();
+  
   const { id } = route.params;
-
   const [log, setLog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fullScreenImage, setFullScreenImage] = useState(null);
+  
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

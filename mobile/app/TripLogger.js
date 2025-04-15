@@ -264,7 +264,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setTrips(0)} className="mr-2">
                 {trips === 0 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -275,7 +275,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row justify-center ">
               <TouchableOpacity onPress={() => setTrips(1)} className="mr-2">
                 {trips === 1 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -453,7 +453,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setDeclaration(1)} className="mr-1">
                 {declaration === 1 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -464,7 +464,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setDeclaration(0)} className="mr-1">
                 {declaration === 0 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -474,7 +474,7 @@ const InspectionForm = ({ navigation }) => {
           </View>
 
       {/* Submit Button */}
-      <TouchableOpacity onPress={pushLog} className="mt-5 bg-blue-600 rounded items-center p-5">
+      <TouchableOpacity onPress={pushLog} className="mt-5 bg-blue-700 rounded items-center p-5">
         <Text className="text-white text-base ">Submit</Text>
       </TouchableOpacity>
       </>
