@@ -28,6 +28,7 @@ urlpatterns = [
 
     # Log URLs
     path('log/data/', getLogData, name='get_log_data'),
+    path('log/fivedata/', getLogFiveData, name='get_log_five_data'),
     path('log/<int:pk>/', getLog, name='get_log'),
     path('log/data/me/', getUserLogs, name='get_user_logs'),
     path('log/add/', addLog, name='add_log'),
