@@ -570,7 +570,7 @@ const InspectionForm = ({ navigation }) => {
     </ScrollView>
     {/* Submitting Circle */}
     {submitDetails && (
-      <View className="flex-1 justify-center items-center">
+      <View className="absolute inset-0 bg-gray-800/50 flex justify-center items-center">
         <SubmittingCircle />
       </View>
     )}
