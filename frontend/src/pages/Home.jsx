@@ -6,6 +6,7 @@ import LogsBarGraph from '../components/LogsBarGraph';
 import UserGraph from '../components/UserGraph';
 
 
+
 function Home() {
   const [darkMode, setDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,22 +26,22 @@ function Home() {
         <WelcomeMessage className="font-bold text-xl " />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 max-w-md sm:max-w-lg mx-auto">
-          <a href="/manage-users" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+          <a href="/manage-users" className="block p-6 text-center bg-[#F38226] text-white font-bold rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition">
             Manage Users
           </a>
-          <a href="/Manage-Equipment" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+          <a href="/Manage-Equipment" className="block p-6 text-center bg-[#F38226] text-white font-bold rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition">
             Manage Equipment
           </a>
-          <a href="/logs" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+          <a href="/logs" className="block p-6 text-center bg-[#F38226] text-white font-bold rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition">
             Logs
           </a>
-          <a href="/Archive" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+          <a href="/Archive" className="block p-6 text-center bg-[#F38226] text-white font-bold rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition">
             Archive
           </a>
-          <a href="/Incidents" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+          <a href="/Incidents" className="block p-6 text-center bg-[#F38226] text-white font-bold rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition">
             Incidents
           </a>
-          <a href="/Upload" className="block p-6 text-center bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
+          <a href="/Upload" className="block p-6 text-center bg-[#F38226] text-white font-bold rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition">
             Upload Logs
           </a>
         </div>

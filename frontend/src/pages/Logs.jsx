@@ -54,10 +54,10 @@ function Logs() {
       setFilteredLogs(logs);
       return;
     }
-  
+
     // Start with the full logs
     let filtered = allLogs;
-  
+
     // Apply date filter
     if (startDate || endDate) {
       filtered = filtered.filter((log) => {
@@ -73,7 +73,7 @@ function Logs() {
         return valid;
       });
     }
-  
+
     // Apply search filter
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
@@ -110,7 +110,7 @@ function Logs() {
     }
     setFilteredLogs(filtered);
   };
-  
+
 
   const reset = () => {
     setSearchTerm("");
@@ -142,7 +142,7 @@ function Logs() {
           setEndDate={setEndDate}
         />
         {/* Display default date range if no filters applied */}
-        { !searchTerm && !startDate && !endDate && (
+        {!searchTerm && !startDate && !endDate && (
           <div className="ml-4 text-sm text-gray-500">
             Showing logs from {thirtyDaysAgo.toLocaleDateString()} to {now.toLocaleDateString()}
           </div>
@@ -164,7 +164,7 @@ function Logs() {
             </table>
           </div>
           {/* Table body */}
-          <div className="overflow-y-auto max-h-[80vh]">
+          <div className="overflow-y-auto max-h-[60vh]">
             <table className="w-full border-collapse">
               <tbody>
                 {loading ? (

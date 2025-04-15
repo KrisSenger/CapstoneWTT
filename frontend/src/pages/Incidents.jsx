@@ -54,7 +54,7 @@ function Incidents() {
     // Always start with all incidents so that searches cover the full dataset.
     let filtered = allIncidents;
 
-  // Filter by selected date range if specified
+    // Filter by selected date range if specified
     if (startDate || endDate) {
       filtered = filtered.filter((incident) => {
         if (!incident.date) return false;
@@ -134,7 +134,7 @@ function Incidents() {
           setEndDate={setEndDate}
         />
         {/* Display default date range if no filters applied */}
-        { !searchTerm && !startDate && !endDate && (
+        {!searchTerm && !startDate && !endDate && (
           <div className="ml-4 text-sm text-gray-500">
             Showing incidents from {thirtyDaysAgo.toLocaleDateString()} to {now.toLocaleDateString()}
           </div>
@@ -156,7 +156,7 @@ function Incidents() {
             </table>
           </div>
           {/* Table body */}
-          <div className="overflow-y-auto max-h-[80vh]">
+          <div className="overflow-y-auto max-h-[60vh]">
             <table className="w-full border-collapse">
               <tbody>
                 {loading ? (

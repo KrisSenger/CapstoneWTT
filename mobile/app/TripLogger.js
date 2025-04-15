@@ -506,7 +506,7 @@ const InspectionForm = ({ navigation }) => {
         <View key={`truck-${id}`} className="flex-row items-center mb-2 ">
           <TouchableOpacity onPress={() => toggleAnswer(id)} className="mr-2">
             {answers.includes(id) ? (
-              <Ionicons name="checkbox" size={24} color="#2563eb" />
+              <Ionicons name="checkbox" size={24} color="#1d4ed8" />
             ) : (
               <Ionicons name="square-outline" size={24} color="gray" />
             )}
@@ -520,7 +520,7 @@ const InspectionForm = ({ navigation }) => {
         <View key={`trailer-${id}`} className="flex-row items-center mb-2">
           <TouchableOpacity onPress={() => toggleAnswer(id)} className="mr-2">
             {answers.includes(id) ? (
-              <Ionicons name="checkbox" size={24} color="#2563eb" />
+              <Ionicons name="checkbox" size={24} color="#1d4ed8" />
             ) : (
               <Ionicons name="square-outline" size={24} color="gray" />
             )}
@@ -530,7 +530,7 @@ const InspectionForm = ({ navigation }) => {
 
       ))}
           <View>
-          <TouchableOpacity onPress={addPicture} className="mt-5 p-4 bg-blue-600 rounded items-center">
+          <TouchableOpacity onPress={addPicture} className="mt-5 p-4 bg-blue-700 rounded items-center">
               <Text className="text-white text-base">Add a Picture</Text>
           </TouchableOpacity>
           </View>
@@ -560,14 +560,14 @@ const InspectionForm = ({ navigation }) => {
             </View>
           )}
           
-          <TouchableOpacity onPress={submitAnswers} className="mt-24 p-4 bg-blue-600 rounded items-center">
+          <TouchableOpacity onPress={submitAnswers} className="mt-24 p-4 bg-blue-700 rounded items-center">
             <Text className="text-white text-base">Submit Details</Text>
           </TouchableOpacity>
           
       </>
       )}
 
-    </ScrollView>
+   </ScrollView>
     {/* Submitting Circle */}
     {submitDetails && (
       <View className="absolute inset-0 bg-gray-800/50 flex justify-center items-center">

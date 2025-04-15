@@ -42,7 +42,8 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     try {
       const { data } = await api.get('/api/user/data/');
-      setUsers(data);
+      const sortedUsers = data.sort((a, b) => a.id - b.id);
+      setUsers(sortedUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -84,7 +85,7 @@ const ManageUsers = () => {
     if (!window.confirm("Are you sure you want to update this user?")) {
       return; // Cancel update if not confirmed
     }
-    
+
     const payload = { ...formData };
     if (payload.password === "") {
       delete payload.password;
@@ -102,13 +103,13 @@ const ManageUsers = () => {
       console.error('Error updating user:', error);
     }
   };
-  
+
   const deactivateUser = async (user) => {
     // Ask for confirmation before deactivating the user
     if (!window.confirm(`Are you sure you want to deactivate user ${user.username}?`)) {
       return; // Cancel deactivation if not confirmed
     }
-    
+
     try {
       const payload = {
         username: user.username,
@@ -129,13 +130,13 @@ const ManageUsers = () => {
       console.error('Error deactivating user:', error);
     }
   };
-  
+
   const activateUser = async (user) => {
     // Ask for confirmation before reactivating the user
     if (!window.confirm(`Are you sure you want to reactivate user ${user.username}?`)) {
       return; // Cancel activation if not confirmed
     }
-    
+
     try {
       const payload = {
         username: user.username,
@@ -155,7 +156,7 @@ const ManageUsers = () => {
     } catch (error) {
       console.error('Error activating user:', error);
     }
-  };  
+  };
 
   const handleCloseAddPopup = () => {
     setShowAddPopup(false);
@@ -193,11 +194,11 @@ const ManageUsers = () => {
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} toggleSidebar={toggleSidebar} />
       <Sidebar isSidebarOpen={isSidebarOpen}>
         <div className="flex items-center justify-between mb-4">
-          <button 
-            className="px-4 py-2 ml-4 mt-3 bg-orange-500 text-white rounded-md hover:bg-orange-700 transition duration-200" 
+          <button
+            className="px-4 py-2 ml-4 mt-3 bg-orange-500 text-white rounded-md hover:bg-orange-700 transition duration-200"
             onClick={() => navigate("/")}
-          > 
-            Home 
+          >
+            Home
           </button>
           <h3 className="text-2xl font-semibold">User Management</h3>
           {/* Button to add a new user */}
@@ -280,18 +281,18 @@ const ManageUsers = () => {
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
               {currentUser?.is_superuser && (
-              <div>
-                <label className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    name="is_superuser"
-                    checked={formData.is_superuser}
-                    onChange={handleChange}
-                    className="mr-2"
-                  />
-                  Super Admin
-                </label>
-              </div>
+                <div>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="is_superuser"
+                      checked={formData.is_superuser}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    Super Admin
+                  </label>
+                </div>
               )}
               <div>
                 <label className="inline-flex items-center">

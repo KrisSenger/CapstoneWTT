@@ -60,14 +60,15 @@ const SpecificLog = ({navigation}) => {
   const anyDefects = log.any_defects;
 
   return (
-    <ScrollView className="bg-gray-800">
-      <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('LogbookViewer')}>
+    <View className="flex-1 bg-gray-800">
+      {/* Back Arrow */}
+      <TouchableOpacity className=" top-14 left-4 z-10" onPress={() => navigation.navigate('LogbookViewer')}>
         <Ionicons name="arrow-back" size={30} color="#ed5829" />
       </TouchableOpacity>
-  
-      <View className="p-4">
-        <Text className="text-2xl font-bold text-center mb-4 mt-20 text-white">Daily Inspection Log #{log.logID}</Text>
-  
+
+      <Text className="text-2xl font-bold text-center mt-16 mb-4 text-white">Daily Inspection Log #{log.logID}</Text>
+
+      <ScrollView className="px-4">
         <View className="bg-gray-600 p-4 rounded-lg mb-5">
           <View className="mb-5">
             <Text className="text-lg font-semibold text-white">Vehicle Information:</Text>
@@ -116,9 +117,9 @@ const SpecificLog = ({navigation}) => {
                 {index < 3 ? 'Tractor / Truck' : 'Trailer'} Inspection Items
               </Text>
               {group.map((item) => (
-                <View key={item.itemID} className="flex-row items-center mb-2">
+                <View key={item.itemID} className="flex-row items-center mb-2 ">
                   {item.defective ? (
-                    <Ionicons name="checkbox" size={24} color="#2563eb" className="mr-2" />
+                    <Ionicons name="checkbox" size={24} color="#1d4ed8" className="mr-2" />
                   ) : (
                     <Ionicons name="square-outline" size={24} color="gray" className="mr-2" />
                   )}
@@ -151,8 +152,8 @@ const SpecificLog = ({navigation}) => {
             <Text className="text-white">No pictures available.</Text>
           )}
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
