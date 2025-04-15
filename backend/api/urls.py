@@ -12,7 +12,7 @@ urlpatterns = [
     path('user/update/<int:pk>/', updateUser, name='update_user'),
     path('user/delete/<int:pk>/', deleteUser, name='delete_user'),
 
-    # Truck URLs
+    # Truck URLs 
     path('truck/data/', getTruckData, name='get_truck_data'),
     path('truck/<int:pk>/', getTruck, name='get_truck'),
     path('truck/add/', addTruck, name='add_truck'),
