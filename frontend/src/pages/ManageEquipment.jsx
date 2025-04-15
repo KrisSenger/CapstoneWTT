@@ -44,7 +44,8 @@ const ManageEquipment = () => {
   const fetchTrucks = async () => {
     try {
       const { data } = await api.get('/api/truck/data/');
-      setTrucks(data);
+      const sortedTrucks = data.sort((a, b) => a.truckID - b.truckID);
+      setTrucks(sortedTrucks);
     } catch (error) {
       console.error('Error fetching trucks:', error);
     }
@@ -81,7 +82,7 @@ const ManageEquipment = () => {
       }
       console.error('Error adding truck:', error);
     }
-  };  
+  };
 
   const updateTruck = async (id) => {
     if (!window.confirm("Are you sure you want to edit this truck?")) {
@@ -171,7 +172,8 @@ const ManageEquipment = () => {
   const fetchTrailers = async () => {
     try {
       const { data } = await api.get('/api/trailer/data/');
-      setTrailers(data);
+      const sortedTrailers = data.sort((a, b) => a.trailerID - b.trailerID);
+      setTrailers(sortedTrailers);
     } catch (error) {
       console.error('Error fetching trailers:', error);
     }
@@ -207,7 +209,7 @@ const ManageEquipment = () => {
       }
       console.error('Error adding trailer:', error);
     }
-  };  
+  };
 
   const updateTrailer = async (id) => {
     if (!window.confirm("Are you sure you want to update this trailer?")) {
@@ -315,13 +317,13 @@ const ManageEquipment = () => {
         {/* If no equipment type is selected, show the two choice buttons */}
         {!selectedType && (
           <div className="flex justify-center space-x-8 mt-8">
-            <button 
+            <button
               className="px-8 py-4 bg-orange-500 text-white text-2xl rounded-lg hover:bg-orange-700"
               onClick={() => setSelectedType('truck')}
             >
               Truck Manager
             </button>
-            <button 
+            <button
               className="px-8 py-4 bg-orange-500 text-white text-2xl rounded-lg hover:bg-orange-700"
               onClick={() => setSelectedType('trailer')}
             >
@@ -335,7 +337,7 @@ const ManageEquipment = () => {
           <div>
             {/* Header row with Back button, title, and Add button */}
             <div className="flex items-center justify-between mb-4">
-              <button 
+              <button
                 className="px-4 py-2 ml-4 mt-3 bg-orange-500 text-white rounded-md hover:bg-orange-700 transition duration-200"
                 onClick={() => setSelectedType(null)}
               >
@@ -345,14 +347,14 @@ const ManageEquipment = () => {
                 {selectedType === 'truck' ? 'Truck Management' : 'Trailer Management'}
               </h3>
               {selectedType === 'truck' ? (
-                <button 
+                <button
                   className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-200"
                   onClick={() => setShowTruckAddPopup(true)}
                 >
                   Add Truck
                 </button>
               ) : (
-                <button 
+                <button
                   className="px-4 py-2 mr-4 mt-3 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-200"
                   onClick={() => setShowTrailerAddPopup(true)}
                 >
@@ -428,7 +430,7 @@ const ManageEquipment = () => {
                           In Service
                         </label>
                       </div>
-                      <button 
+                      <button
                         onClick={addTruck}
                         className="w-full py-3 mt-4 bg-blue-600 text-white rounded-md"
                       >
@@ -501,7 +503,7 @@ const ManageEquipment = () => {
                           In Service
                         </label>
                       </div>
-                      <button 
+                      <button
                         onClick={() => updateTruck(editingTruckId)}
                         className="w-full py-3 mt-4 bg-blue-600 text-white rounded-md"
                       >
@@ -510,7 +512,7 @@ const ManageEquipment = () => {
                     </div>
                   </Popup>
                 )}
-                <div className="overflow-x-hidden overflow-y-auto max-h-[60vh] mt-4">
+                <div className="overflow-x-hidden overflow-y-auto max-h-[80vh] mt-4">
                   <table className="w-full table-auto border-collapse">
                     <thead className="bg-gray-800 text-white sticky top-0 z-10">
                       <tr>
@@ -637,7 +639,7 @@ const ManageEquipment = () => {
                           In Service
                         </label>
                       </div>
-                      <button 
+                      <button
                         onClick={addTrailer}
                         className="w-full py-3 mt-4 bg-green-600 text-white rounded-md"
                       >
@@ -702,7 +704,7 @@ const ManageEquipment = () => {
                           In Service
                         </label>
                       </div>
-                      <button 
+                      <button
                         onClick={() => updateTrailer(editingTrailerId)}
                         className="w-full py-3 mt-4 bg-green-600 text-white rounded-md"
                       >
@@ -711,7 +713,7 @@ const ManageEquipment = () => {
                     </div>
                   </Popup>
                 )}
-                <div className="overflow-x-hidden overflow-y-auto max-h-[60vh] mt-4">
+                <div className="overflow-x-hidden overflow-y-auto max-h-[80vh] mt-4">
                   <table className="w-full table-auto border-collapse">
                     <thead className="bg-gray-800 text-white sticky top-0 z-10">
                       <tr>
