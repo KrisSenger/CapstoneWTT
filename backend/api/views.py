@@ -710,7 +710,7 @@ def process_document(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getArchiveData(request):
-    archives = WTT_Archive.objects.all()
+    archives = WTT_Archive.objects.all().order_by('-archiveID')
     serializer = ArchiveSerializer(archives, many=True)
     return Response(serializer.data)
 
