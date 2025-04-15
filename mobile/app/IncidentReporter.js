@@ -132,7 +132,7 @@ const IncidentReporter = ({ navigation }) => {
         />
       </View>
   <View>
-  <TouchableOpacity onPress={addPicture} className="mt-5 p-4 bg-blue-600 rounded items-center">
+  <TouchableOpacity onPress={addPicture} className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center">
       <Text className="text-white text-base">Add a Picture</Text>
   </TouchableOpacity>
   </View>

@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SelectList } from 'react-native-dropdown-select-list'
-import TrailerPicker from '../components/TrailerPicker';
-import TruckPicker from '../components/TruckPicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PICKED_TRUCK, PICKED_TRAILER } from '../constants';
 import api from '../api';
@@ -90,7 +87,13 @@ const InspectionForm = ({ navigation }) => {
   const [declaration, setDeclaration] = useState(1);
   const [logIDNumber, setLogIDNumber] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
+  const scrollRef = useRef();
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ y: 0});
+    }
+  }, [showBoxes]);
   const toggleAnswer = (id) => {
     setAnswers((prev) =>
       prev.includes(id) ? prev.filter((val) => val !== id) : [...prev, id]
@@ -246,7 +249,10 @@ const InspectionForm = ({ navigation }) => {
 
 
   return (
-    <ScrollView className="flex-1 p-5 bg-gray-800 pb-10"contentContainerStyle={{ paddingBottom: 25 }}>
+    <ScrollView 
+    className="flex-1 p-5 bg-gray-800 pb-10"
+    contentContainerStyle={{ paddingBottom: 25 }}
+    ref={scrollRef}>
           {/* Back Button */}
           <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
             <Ionicons name="arrow-back" size={30} color="#ed5829" />
