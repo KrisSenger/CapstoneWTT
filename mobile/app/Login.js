@@ -49,7 +49,7 @@ const Login = () => {
 
       {/* Login Form */}
       <View className="px-6 mb-16 bg-gray-800 rounded-t-3xl">
-        <Text className="text-3xl font-bold text-blue-600 mb-2 text-center">
+        <Text className="text-3xl font-bold text-blue-700 mb-2 text-center">
           What The Truck!
         </Text>
         <Text className="mb-1 mt-6 text-white/90">Username</Text>
@@ -87,7 +87,7 @@ const Login = () => {
 
         <TouchableOpacity
           onPress={handleSubmit}
-          className="bg-blue-600 py-3 rounded-lg"
+          className="bg-blue-700 py-3 rounded-lg"
         >
           <Text className="text-white text-center font-semibold">Login</Text>
         </TouchableOpacity>

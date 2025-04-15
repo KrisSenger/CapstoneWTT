@@ -47,7 +47,6 @@ const IncidentReporter = ({ navigation }) => {
 
 
     const addPicture = async () => {
-      console.log('Adding picture...');
       const asset = await UploadLogPicture(); 
       if (asset) {
         setSelectedImage(asset); 
@@ -72,7 +71,6 @@ const IncidentReporter = ({ navigation }) => {
         const response = await api.post('/api/incident/picture/add/', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        alert('✅ Image uploaded successfully!');
       } catch (error) {
         console.error('❌ Upload failed:', error.response?.data || error.message);
         alert('❌ Upload failed. Try again.');
@@ -80,8 +78,6 @@ const IncidentReporter = ({ navigation }) => {
     };
 
   const handleSubmit = async () => {
-    console.log('Incident Details:', text);
-    console.log('Image:', image);
     try {
       const response = await api.post('/api/incident/add/', {
         date: date,
@@ -93,10 +89,10 @@ const IncidentReporter = ({ navigation }) => {
       });
       console.log('Incident submitted successfully:', response.data);
 
-      alert('Incident created successfully!');
       if(selectedImage) {
         await uploadSelectedImage(response.data.incidentID);
       }
+      alert('Incident Submitted successfully!');
       navigation.navigate('Home');
     }
     catch (error) {
@@ -132,7 +128,7 @@ const IncidentReporter = ({ navigation }) => {
         />
       </View>
   <View>
-  <TouchableOpacity onPress={addPicture} className="mt-5 p-4 bg-blue-600 rounded items-center">
+  <TouchableOpacity onPress={addPicture} className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center">
       <Text className="text-white text-base">Add a Picture</Text>
   </TouchableOpacity>
   </View>

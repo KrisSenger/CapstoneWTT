@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SelectList } from 'react-native-dropdown-select-list'
-import TrailerPicker from '../components/TrailerPicker';
-import TruckPicker from '../components/TruckPicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PICKED_TRUCK, PICKED_TRAILER } from '../constants';
 import api from '../api';
 import UploadLogPicture from './../components/UploadLogPicture';
+import SubmittingCircle from '../components/SubmittingCircle';
 
 
   
@@ -76,12 +74,14 @@ const InspectionForm = ({ navigation }) => {
   const [carrierAddress, setCarrierAddress] = useState('2612 58 Ave SE, Calgary, AB T2C 1G5');
   const [userCity, setUserCity] = useState('');
   const [userLocation, setUserLocation] = useState('');
-  const [odometer, setOdometer] = useState(0);
+
   const [trailerPlate, setTrailerPlate] = useState();
   const [answers, setAnswers] = useState([]);
   const [showBoxes, setShowBoxes] = useState(false);
   const [date, setDate] = useState(new Date());
   const [remarks, setRemarks] = useState();
+  const [odometer, setOdometer] = useState(0);
+  const [userOdometer, setUserOdometer] = useState(0);
   const [loadWeight, setLoadWeight] = useState(0);
   const [loadHeight, setLoadHeight] = useState(0);
   const [defects, setDefects] = useState();
@@ -90,12 +90,18 @@ const InspectionForm = ({ navigation }) => {
   const [declaration, setDeclaration] = useState(1);
   const [logIDNumber, setLogIDNumber] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [submitDetails, setSubmitDetails] = useState(false);
+  const scrollRef = useRef();
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ y: 0});
+    }
+  }, [showBoxes]);
   const toggleAnswer = (id) => {
     setAnswers((prev) =>
       prev.includes(id) ? prev.filter((val) => val !== id) : [...prev, id]
     );
-    console.log('Selected answers:', answers);
   };
   useEffect(() => {
     const fetchAllData = async () => {
@@ -128,6 +134,7 @@ const InspectionForm = ({ navigation }) => {
           setTruck(selectedTruck);
           setTruckDisplay(selectedTruck.truckID);
           setOdometer(selectedTruck.odometer);
+          setUserOdometer(selectedTruck.odometer);
         }
   
       } catch (error) {
@@ -140,67 +147,69 @@ const InspectionForm = ({ navigation }) => {
 
   const pushLog = async () => {
     try {
-      const response = await api.post('/api/log/add/', {
-        trip: trips,
-        location: userLocation,
-        city: userCity,
-        date: date,
-        load: loadWeight,
-        height: loadHeight,
-        defects_en_route: defects,
-        incidents: incidents,
-        remarks: remarks,
-        declaration: declaration,
-        signature: user.first_name,
-        employeeID: user.employeeID,
-        trailerID: trailer,
-        truckID: truck.truckID,
-      });
-      console.log('Log created successfully:', response.data.logID);
-      setLogIDNumber(response.data.logID);
-      //Switch disply to allow the user to fill out the check boxes
-      if(declaration === 0){
-        setShowBoxes(true);
-      }else{
-        alert('Log created successfully!');
-        navigation.navigate('Home');
-      }
-      console.log('Log created successfully:', response.data);
-      
+      const missingFields = [];
 
+      if (!userLocation) missingFields.push("Location");
+      if (!userCity) missingFields.push("City");
+      if (!carrier) missingFields.push("Carrier");
+      if (!carrierAddress) missingFields.push("Carrier Address");
+      
+      if (missingFields.length > 0) {
+        alert(`Please fill in the following required field(s):\n- ${missingFields.join("\n- ")}`);
+        return;
+      }
+      else{
+        const response = await api.post('/api/log/add/', {
+          trip: trips,
+          location: userLocation,
+          city: userCity,
+          date: date,
+          load: loadWeight,
+          height: loadHeight,
+          defects_en_route: defects,
+          incidents: incidents,
+          remarks: remarks,
+          declaration: declaration,
+          signature: user.first_name,
+          employeeID: user.employeeID,
+          trailerID: trailer,
+          truckID: truck.truckID,
+        });
+
+        if(userOdometer > odometer){
+          await api.put(`/api/truck/update/${truck.truckID}/`, {
+            make_model: truck.make_model,
+            license_plate: truck.license_plate,
+            carrier: truck.carrier,
+            jurisdiction: truck.jurisdiction,
+            odometer: userOdometer,
+          });
+        }
+        setLogIDNumber(response.data.logID);
+        if(declaration === 0){
+          setShowBoxes(true);
+        }else{
+          alert('Log created successfully!');
+          navigation.navigate('Home');
+        }
+      }
     } catch (error) {
       console.error('Error creating log:', error);
-      console.log({
-        trip: trips,
-        location: userLocation,
-        city: userCity,
-        date: date,
-        load: loadWeight,
-        height: loadHeight,
-        defects_en_route: defects,
-        incidents: incidents,
-        remarks: remarks,
-        declaration: declaration,
-        signature: user.first_name,
-        employeeID: user.employeeID,
-        trailerID: trailer,
-        truckID: truck.truckID,
-      });
     }
   }
   const submitAnswers = async () => {
     try {
+      setSubmitDetails(true);
       for (const detailId of answers) {
         const payload = {
           logID: logIDNumber, 
           itemID: detailId
         };
   
-        console.log('Sending payload:', payload);
         await api.post('api/log-inspect-det/add/', payload);
       }
       await uploadSelectedImage();
-      console.log('All details submitted successfully!');
+      alert('Log details submitted successfully!');
       navigation.navigate('Home');
     } catch (error) {
       if (error.response) {
@@ -210,6 +219,8 @@ const InspectionForm = ({ navigation }) => {
       } else {
         console.error('Error setting up request:', error.message);
       }
+    }finally {
+      setIsSubmitting(false); // End loading
     }
   };
   const addPicture = async () => {
@@ -237,7 +248,6 @@ const InspectionForm = ({ navigation }) => {
       const response = await api.post('/api/log/picture/add/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      alert('✅ Image uploaded successfully!');
     } catch (error) {
       console.error('❌ Upload failed:', error.response?.data || error.message);
       alert('❌ Upload failed. Try again.');
@@ -246,19 +256,23 @@ const InspectionForm = ({ navigation }) => {
 
 
   return (
-    <ScrollView className="flex-1 p-5 bg-gray-800 pb-10"contentContainerStyle={{ paddingBottom: 25 }}>
+    <View className="flex-1 bg-gray-800">
+    <ScrollView 
+    className="flex-1 p-5 bg-gray-800 pb-10"
+    contentContainerStyle={{ paddingBottom: 25 }}
+    ref={scrollRef}>
           {/* Back Button */}
           <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
             <Ionicons name="arrow-back" size={30} color="#ed5829" />
           </TouchableOpacity>
 
-          {!showBoxes && (
+          {!showBoxes && !submitDetails && (
             <>
-          <View className="flex-row justify-around mt-20">
+          <View className="flex-row justify-around mt-20 ">
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setTrips(0)} className="mr-2">
                 {trips === 0 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -269,7 +283,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row justify-center ">
               <TouchableOpacity onPress={() => setTrips(1)} className="mr-2">
                 {trips === 1 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -346,47 +360,53 @@ const InspectionForm = ({ navigation }) => {
             <Text className="text-xl text-white">{date.toLocaleString()}</Text>
           </View>
 
-          {/* Load Weight*/}
+                    {/* Load Weight */}
           <View className="mb-4">
             <Text className="text-xl font-bold mt-5 mb-2 text-white">Load Weight:</Text>
             <TextInput
               className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the weight of the load"
               placeholderTextColor="#d1d5db"
-              value={loadWeight}
-              onChangeText={setLoadWeight}
+              value={String(loadWeight)}
+              onChangeText={(text) => {
+                if (/^\d*$/.test(text)) setLoadWeight(Number(text)); // allow only digits
+              }}
+              editable={trailer !== null}
               keyboardType="numeric"
-              multiline={false}
-              numberOfLines={1}
             />
           </View>
-          {/* Load Height*/}
+
+          {/* Load Height */}
           <View className="mb-4">
             <Text className="text-xl font-bold mt-5 mb-2 text-white">Load Height:</Text>
             <TextInput
               className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the height of the load"
               placeholderTextColor="#d1d5db"
-              value={loadHeight}
-              onChangeText={setLoadHeight}
+              value={String(loadHeight)}
+              onChangeText={(text) => {
+                if (/^\d*$/.test(text)) setLoadHeight(Number(text)); // allow only digits
+              }}
+              editable={trailer !== null}
               keyboardType="numeric"
-              multiline={false}
-              numberOfLines={1}
             />
-          </View> 
-          {/* Odomoter */}
+          </View>
+
+          {/* Odometer */}
           <View className="mb-4">
-            <Text className="text-xl font-bold mt-5 mb-2 text-white">Odomoter:</Text>
+            <Text className="text-xl font-bold mt-5 mb-2 text-white">Odometer:</Text>
             <TextInput
               className="h-12 border border-gray-200 rounded p-2 text-white bg-gray-600"
               placeholder="Enter the current KM count of the vehicle"
-              placeholderTextColor='#d1d5db'
-              value={odometer}
-              onChangeText={setOdometer}
-              multiline={true}
-              numberOfLines={10}
+              placeholderTextColor="#d1d5db"
+              value={String(userOdometer)}
+              onChangeText={(text) => {
+                if (/^\d*$/.test(text)) setUserOdometer(Number(text)); // allow only digits
+              }}
+              keyboardType="numeric"
             />
           </View>
+
 
           {/* Trailer License Plate */}
           <View className="mb-4">
@@ -396,6 +416,7 @@ const InspectionForm = ({ navigation }) => {
               placeholder="Enter the license plate for the trailer"
               placeholderTextColor='#d1d5db'
               value={trailerPlate}
+              editable={trailer !== null}
               onChangeText={setTrailerPlate}
               multiline={true}
               numberOfLines={10}
@@ -424,6 +445,7 @@ const InspectionForm = ({ navigation }) => {
             placeholderTextColor='#d1d5db'
             value={defects}
             onChangeText={setDefects}
+            textAlignVertical='top'
             multiline={true}
             numberOfLines={10}
           />
@@ -436,6 +458,7 @@ const InspectionForm = ({ navigation }) => {
             placeholder="Enter Incident details here"
             placeholderTextColor='#d1d5db'
             value={incidents}
+            textAlignVertical='top'
             onChangeText={setIncidents}
             multiline={true}
             numberOfLines={10}
@@ -447,7 +470,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setDeclaration(1)} className="mr-1">
                 {declaration === 1 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -458,7 +481,7 @@ const InspectionForm = ({ navigation }) => {
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setDeclaration(0)} className="mr-1">
                 {declaration === 0 ? (
-                  <Ionicons name="checkbox" size={24} color="#2563eb" />
+                  <Ionicons name="checkbox" size={24} color="#1d4ed8" />
                 ) : (
                   <Ionicons name="square-outline" size={24} color="gray" />
                 )}
@@ -468,17 +491,17 @@ const InspectionForm = ({ navigation }) => {
           </View>
 
       {/* Submit Button */}
-      <TouchableOpacity onPress={pushLog} className="mt-5 bg-blue-600 rounded items-center p-5">
+      <TouchableOpacity onPress={pushLog} className="mt-5 bg-blue-700 rounded items-center p-5">
         <Text className="text-white text-base ">Submit</Text>
       </TouchableOpacity>
       </>
       )}
       {/* Checkbox Section*/}
-      {showBoxes && (
+      {showBoxes && !submitDetails  && (
       <>
       {/* Tractor/Truck Section */}
 
-      <Text className="text-xl font-bold mt-5 mb-2 text-white">Tractor/Truck:</Text>
+      <Text className="text-xl font-bold mt-20 mb-2 text-white ">Tractor/Truck:</Text>
       {Object.entries(truckKeyMap).map(([label, id]) => (
         <View key={`truck-${id}`} className="flex-row items-center mb-2 ">
           <TouchableOpacity onPress={() => toggleAnswer(id)} className="mr-2">
@@ -545,6 +568,13 @@ const InspectionForm = ({ navigation }) => {
       )}
 
     </ScrollView>
+    {/* Submitting Circle */}
+    {submitDetails && (
+      <View className="absolute inset-0 bg-gray-800/50 flex justify-center items-center">
+        <SubmittingCircle />
+      </View>
+    )}
+  </View>
   );
 };
 
