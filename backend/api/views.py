@@ -705,4 +705,68 @@ def process_document(request):
             {"error": f"Error processing document: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+# Archive Views
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getArchiveData(request):
+    archives = WTT_Archive.objects.all()
+    serializer = ArchiveSerializer(archives, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getArchive(request, pk):
+    try:
+        archive = WTT_Archive.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response({'Archive not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ArchiveSerializer(archive, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getArchiveItems(request, archive_id):
+    """
+    API endpoint to get all items for a specific archive.
+    """
+    try:
+        archive = WTT_Archive.objects.get(archiveID=archive_id)
+        
+        # Get all inspection items
+        all_items = WTT_Log_Inspect_Items.objects.all().order_by('itemID')
+        
+        # Get checked items for this archive
+        checked_items = set(
+            WTT_Archive_Det.objects.filter(archiveID=archive)
+            .values_list('itemID__itemID', flat=True)
+        )
+        
+        # Group items by category
+        group1_ids = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]
+        group2_ids = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+        group3_ids = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+        trailer_ids = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+
+        def serialize_item(item):
+            return {
+                'itemID': item.itemID,
+                'item_name': item.item_name,
+                'checked': item.itemID in checked_items
+            }
+
+        response_data = {
+            'truck_items_group1': [serialize_item(i) for i in all_items if i.itemID in group1_ids],
+            'truck_items_group2': [serialize_item(i) for i in all_items if i.itemID in group2_ids],
+            'truck_items_group3': [serialize_item(i) for i in all_items if i.itemID in group3_ids],
+            'trailer_items': [serialize_item(i) for i in all_items if i.itemID in trailer_ids],
+        }
+
+        return Response(response_data)
+    except WTT_Archive.DoesNotExist:
+        return Response(
+            {"error": "Archive not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
                 

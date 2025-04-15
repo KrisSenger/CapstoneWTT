@@ -241,6 +241,9 @@ class ArchiveSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ArchiveDetSerializer(serializers.ModelSerializer):
+    item_name = serializers.CharField(source='itemID.item_name', read_only=True)
+    itemID = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = WTT_Archive_Det
-        fields = '__all__'
+        fields = ['detailID', 'archiveID', 'itemID', 'item_name']
