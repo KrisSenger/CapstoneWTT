@@ -62,7 +62,7 @@ const SpecificLog = ({navigation}) => {
   return (
     <View className="flex-1 bg-gray-800">
       {/* Back Arrow */}
-      <TouchableOpacity className="top-14 left-4 z-10 absolute" onPress={() => navigation.navigate('LogbookViewer')}>
+      <TouchableOpacity className=" top-14 left-4 z-10" onPress={() => navigation.navigate('LogbookViewer')}>
         <Ionicons name="arrow-back" size={30} color="#ed5829" />
       </TouchableOpacity>
 
