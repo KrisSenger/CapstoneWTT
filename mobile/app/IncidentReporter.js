@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, Image, TouchableOpacity, ScrollView, SafeAreaView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api'; 
@@ -101,68 +101,70 @@ const IncidentReporter = ({ navigation }) => {
   };
 
   return (
-    <ScrollView className="flex-1 p-4 bg-gray-800">
-      {/* Back Arrow */}
-      <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
-        <Ionicons name="arrow-back" size={30} color="#ed5829" />
+    <SafeAreaView className="flex-1 bg-gray-800">
+        <ScrollView className="flex-1 p-4">
+          {/* Back Arrow */}
+          <TouchableOpacity className="absolute top-10 left-4 z-10" onPress={() => navigation.navigate('Home')}>
+            <Ionicons name="arrow-back" size={30} color="#ed5829" />
+          </TouchableOpacity>
+
+          {/*Selected Truck and Trailer */}
+          <View className="flex-col items-end ">
+            <Text className="text-xl text-bold text-white p-2 mt-14">Truck: {truck}</Text>
+            <Text className="text-xl text-bold text-white ">Trailer: {trailerDisplay}</Text>
+          </View>
+
+          {/* Text Input */}
+          <View className="flex-row border border-gray-200 rounded-lg mt-28 p-2 bg-gray-600">
+            <TextInput
+              className="flex-1 h-60 text-white"
+              placeholder="Enter incident details here"
+              placeholderTextColor="#d1d5db"
+              textAlignVertical='top'
+            
+              value={text}
+              onChangeText={setText}
+              multiline={true}
+              numberOfLines={10}
+            />
+          </View>
+      <View>
+      <TouchableOpacity onPress={addPicture} className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center">
+          <Text className="text-white text-base">Add a Picture</Text>
       </TouchableOpacity>
-
-      {/*Selected Truck and Trailer */}
-      <View className="flex-col items-end ">
-        <Text className="text-xl text-bold text-white p-2 mt-14">Truck: {truck}</Text>
-        <Text className="text-xl text-bold   text-white ">Trailer: {trailerDisplay}</Text>
       </View>
 
-      {/* Text Input */}
-      <View className="flex-row border border-gray-200 rounded-lg mt-28 p-2 bg-gray-600">
-        <TextInput
-          className="flex-1 h-60 text-white"
-          placeholder="Enter incident details here"
-          placeholderTextColor="#d1d5db"
-          textAlignVertical='top'
-        
-          value={text}
-          onChangeText={setText}
-          multiline={true}
-          numberOfLines={10}
-        />
-      </View>
-  <View>
-  <TouchableOpacity onPress={addPicture} className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center">
-      <Text className="text-white text-base">Add a Picture</Text>
-  </TouchableOpacity>
-  </View>
+      {selectedImage && (
+        <View style={{ alignSelf: 'center', marginVertical: 10 }}>
+          <View style={{ position: 'relative' }}>
+            <Image
+              source={{ uri: selectedImage.uri }}
+              style={{ width: 200, height: 200, borderRadius: 10 }}
+            />
+            <TouchableOpacity
+              onPress={() => setSelectedImage(null)}
+              style={{
+                position: 'absolute',
+                top: -8,
+                right: -8,
+                backgroundColor: '#fff',
+                borderRadius: 12,
+                padding: 2,
+                elevation: 4,
+              }}
+            >
+              <Ionicons name="close" size={20} color="#ff3b30" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
-  {selectedImage && (
-    <View style={{ alignSelf: 'center', marginVertical: 10 }}>
-      <View style={{ position: 'relative' }}>
-        <Image
-          source={{ uri: selectedImage.uri }}
-          style={{ width: 200, height: 200, borderRadius: 10 }}
-        />
-        <TouchableOpacity
-          onPress={() => setSelectedImage(null)}
-          style={{
-            position: 'absolute',
-            top: -8,
-            right: -8,
-            backgroundColor: '#fff',
-            borderRadius: 12,
-            padding: 2,
-            elevation: 4,
-          }}
-        >
-          <Ionicons name="close" size={20} color="#ff3b30" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  )}
-
-      {/* Submit Button */}
-      <TouchableOpacity className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center" onPress={handleSubmit}>
-        <Text className="text-white text-lg">Submit</Text>
-      </TouchableOpacity>
-    </ScrollView>
+          {/* Submit Button */}
+          <TouchableOpacity className="mt-4 p-4 bg-blue-700/70 rounded-xl items-center" onPress={handleSubmit}>
+            <Text className="text-white text-lg">Submit</Text>
+          </TouchableOpacity>
+        </ScrollView>
+  </SafeAreaView>
   );
 };
 
