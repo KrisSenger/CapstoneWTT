@@ -260,7 +260,7 @@ const InspectionForm = ({ navigation }) => {
 
           {!showBoxes && (
             <>
-          <View className="flex-row justify-around mt-20">
+          <View className="flex-row justify-around mt-20 ">
             <View className="flex-row items-center">
               <TouchableOpacity onPress={() => setTrips(0)} className="mr-2">
                 {trips === 0 ? (
@@ -484,7 +484,7 @@ const InspectionForm = ({ navigation }) => {
       <>
       {/* Tractor/Truck Section */}
 
-      <Text className="text-xl font-bold mt-5 mb-2 text-white">Tractor/Truck:</Text>
+      <Text className="text-xl font-bold mt-20 mb-2 text-white ">Tractor/Truck:</Text>
       {Object.entries(truckKeyMap).map(([label, id]) => (
         <View key={`truck-${id}`} className="flex-row items-center mb-2 ">
           <TouchableOpacity onPress={() => toggleAnswer(id)} className="mr-2">

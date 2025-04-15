@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 10,
-    color: '#4B5563', 
+    color: '#ffffff', 
     fontSize: 16,
   },
 });
