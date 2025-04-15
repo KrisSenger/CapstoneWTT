@@ -16,6 +16,7 @@ from functools import wraps
 from google.cloud import documentai_v1 as documentai
 from dotenv import load_dotenv
 from .forms import *
+from datetime import datetime, timedelta
 import os
 
 load_dotenv()
@@ -331,6 +332,25 @@ def getLog(request, pk):
     log_data["defective_items"] = defective_items
 
     return Response(log_data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getLogFiveData(request):
+    days_param = request.query_params.get('days', '5')  # default to 5 days if not provided
+    try:
+        days = int(days_param)
+    except ValueError:
+        return Response({"error": "Invalid parameter for days."}, status=400)
+    
+    now = datetime.now()
+    start_date = now - timedelta(days=days)
+    logs = WTT_Log.objects.select_related('truck', 'trailer', 'employee').filter(
+        date__gte=start_date,
+        date__lte=now
+    )
+    serializer = LogSerializer(logs, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])
